@@ -9,6 +9,11 @@ export type UserPasswordSettingsRequest = z.infer<
   typeof userPasswordSettingsRequestSchema
 >;
 
+export enum UserPasswordSettingsError {
+  NotMatch = "NotMatch",
+  NotFound = "NotFound",
+}
+
 export const userPasswordSettingsResponseSchema = z.object({
   success: z.boolean(),
 });

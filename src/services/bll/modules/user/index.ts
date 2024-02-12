@@ -1,6 +1,11 @@
 import { hashService } from "@/services/hash";
 import { BllModule } from "../../utils";
 import { SignUpRequest } from "../auth/dto";
+import {
+  UserBaseSettingsRequest,
+  UserPasswordSettingsError,
+  UserPasswordSettingsRequest,
+} from "./dto";
 
 export class UserBllModule extends BllModule {
   getByEmail(email: string) {
@@ -19,6 +24,34 @@ export class UserBllModule extends BllModule {
         email: dto.email,
         password: hashedPassword,
       },
+    });
+  }
+
+  async updateBaseSettings(data: UserBaseSettingsRequest, userId: string) {
+    const neededUser = await this.getById(userId);
+
+    if (!neededUser) this.throw(UserPasswordSettingsError.NotFound);
+
+    return this.prismaService.user.update({ where: { id: userId }, data });
+  }
+
+  async updatePassword(dto: UserPasswordSettingsRequest, userId: string) {
+    const neededUser = await this.getById(userId);
+
+    if (!neededUser) this.throw(UserPasswordSettingsError.NotFound);
+
+    const isPasswordValid = await hashService.compare(
+      dto.oldPassword,
+      neededUser.password
+    );
+
+    if (!isPasswordValid) this.throw(UserPasswordSettingsError.NotMatch);
+
+    const hashedPassword = await hashService.hash(dto.newPassword);
+
+    return this.prismaService.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
     });
   }
 }

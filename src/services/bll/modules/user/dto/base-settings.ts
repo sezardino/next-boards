@@ -9,8 +9,12 @@ export type UserBaseSettingsRequest = z.infer<
   typeof userBaseSettingsRequestSchema
 >;
 
+export enum UserBaseSettingsError {
+  NotFound = "NotFound",
+}
+
 export const userBaseSettingsResponseSchema = z.object({
-  success: z.boolean(),
+  error: z.nativeEnum(UserBaseSettingsError),
 });
 
 export type UserBaseSettingsResponse = z.infer<

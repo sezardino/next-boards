@@ -10,8 +10,12 @@ export type PomodoroSettingsRequest = z.infer<
   typeof pomodoroSettingsRequestSchema
 >;
 
+export enum PomodoroSettingsError {
+  NotFound = "NotFound",
+}
+
 export const pomodoroSettingsResponseSchema = z.object({
-  success: z.boolean(),
+  error: z.nativeEnum(PomodoroSettingsError),
 });
 
 export type PomodoroSettingsResponse = z.infer<

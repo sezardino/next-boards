@@ -8,7 +8,6 @@ export const signInRequestSchema = z.object({
 export type SignInRequest = z.infer<typeof signInRequestSchema>;
 
 export enum SignInError {
-  NotFound = "NotFound",
   WrongCredentials = "WrongCredentials",
 }
 

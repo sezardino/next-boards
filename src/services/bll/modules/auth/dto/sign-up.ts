@@ -9,6 +9,7 @@ export type SignUpRequest = z.infer<typeof signUpRequestSchema>;
 
 export enum SignUpError {
   EmailAlreadyExists = "EmailAlreadyExists",
+  WrongCredentials = "WrongCredentials",
 }
 
 export const signUpResponseSchema = z.object({
