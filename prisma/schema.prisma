@@ -9,3 +9,146 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  email    String  @unique
+  name     String?
+  password String
+
+  profile          Profile?
+  pomodoro         Pomodoro?
+  boards           Board[]
+  pomodoroSessions PomodoroSession[]
+
+  @@map("user")
+}
+
+model Profile {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+
+  @@map("profile")
+}
+
+model Pomodoro {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+
+  interval Int @default(25)
+  break    Int @default(5)
+  rounds   Int @default(4)
+
+  @@map("pomodoro")
+}
+
+model PomodoroSession {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  completed Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  rounds PomodoroRound[]
+
+  @@map("pomodoro_session")
+}
+
+model PomodoroRound {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  seconds   Int
+  completed Boolean @default(false)
+
+  session   PomodoroSession @relation(fields: [sessionId], references: [id])
+  sessionId String          @db.ObjectId
+
+  @@map("pomodoro_round")
+}
+
+model Board {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title  String
+  status EntityStatus @default(ACTIVE)
+
+  tasks   Task[]
+  columns Column[]
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String   @db.ObjectId
+
+  @@map("board")
+}
+
+model Column {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title  String
+  status EntityStatus @default(ACTIVE)
+
+  board   Board  @relation(fields: [boardId], references: [id])
+  boardId String @db.ObjectId
+  tasks   Task[]
+
+  @@map("column")
+}
+
+model Task {
+  // default fields
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String
+  description String?
+  priority    Priority
+  completed   Boolean  @default(false)
+
+  board    Board   @relation(fields: [boardId], references: [id])
+  boardId  String  @db.ObjectId
+  column   Column? @relation(fields: [columnId], references: [id])
+  columnId String? @db.ObjectId
+
+  @@map("task")
+}
+
+enum Priority {
+  LOWEST
+  LOW
+  MEDIUM
+  HIGH
+  HIGHEST
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
