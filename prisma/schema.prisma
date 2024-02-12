@@ -49,9 +49,9 @@ model Pomodoro {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 
-  interval Int
-  break    Int
-  rounds   Int
+  interval Int @default(25)
+  break    Int @default(5)
+  rounds   Int @default(4)
 
   @@map("pomodoro")
 }
