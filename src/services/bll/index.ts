@@ -10,7 +10,7 @@ class BllService {
 
   constructor(prisma: PrismaService) {
     this.user = new UserBllModule(prisma);
-    this.auth = new AuthBllModule(prisma);
+    this.auth = new AuthBllModule(prisma, this.user);
   }
 }
 

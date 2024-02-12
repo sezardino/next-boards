@@ -7,6 +7,12 @@ export const signUpRequestSchema = z.object({
 
 export type SignUpRequest = z.infer<typeof signUpRequestSchema>;
 
-export const signUpResponseSchema = z.object({});
+export enum SignUpError {
+  EmailAlreadyExists = "EmailAlreadyExists",
+}
+
+export const signUpResponseSchema = z.object({
+  error: z.nativeEnum(SignUpError),
+});
 
 export type SignUpResponse = z.infer<typeof signUpResponseSchema>;
