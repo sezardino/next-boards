@@ -20,10 +20,8 @@ model User {
   name     String?
   password String
 
-  profile          Profile?
-  pomodoro         Pomodoro?
-  boards           Board[]
-  pomodoroSessions PomodoroSession[]
+  profile Profile?
+  boards  Board[]
 
   @@map("user")
 }
@@ -38,53 +36,6 @@ model Profile {
   userId String @unique @db.ObjectId
 
   @@map("profile")
-}
-
-model Pomodoro {
-  // default fields
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
-
-  interval Int @default(25)
-  break    Int @default(5)
-  rounds   Int @default(4)
-
-  @@map("pomodoro")
-}
-
-model PomodoroSession {
-  // default fields
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  completed Boolean @default(false)
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @db.ObjectId
-
-  rounds PomodoroRound[]
-
-  @@map("pomodoro_session")
-}
-
-model PomodoroRound {
-  // default fields
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  seconds   Int
-  completed Boolean @default(false)
-
-  session   PomodoroSession @relation(fields: [sessionId], references: [id])
-  sessionId String          @db.ObjectId
-
-  @@map("pomodoro_round")
 }
 
 model Board {
@@ -110,8 +61,8 @@ model Column {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  title  String
-  status EntityStatus @default(ACTIVE)
+  title String
+  order Int    @default(0)
 
   board   Board  @relation(fields: [boardId], references: [id])
   boardId String @db.ObjectId
@@ -128,8 +79,9 @@ model Task {
 
   title       String
   description String?
-  priority    Priority
+  priority    Priority @default(MEDIUM)
   completed   Boolean  @default(false)
+  order       Int      @default(0)
 
   board    Board   @relation(fields: [boardId], references: [id])
   boardId  String  @db.ObjectId
