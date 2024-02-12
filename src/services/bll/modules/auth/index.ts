@@ -15,7 +15,7 @@ export class AuthBllModule extends BllModule {
   async signIn(dto: SignUpRequest) {
     const userResponse = await this.userModule.getByEmail(dto.email);
 
-    if (!userResponse) this.throw(SignInError.NotFound);
+    if (!userResponse) this.throw(SignInError.WrongCredentials);
 
     const { password, ...user } = userResponse;
 
