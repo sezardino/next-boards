@@ -12,8 +12,9 @@ import { z } from "zod";
 import { Button } from "../base/Button";
 import { Grid } from "../base/Grid";
 import { Input } from "../base/Input";
+import { type } from "os";
 
-type AuthFormValues = {
+export type AuthFormValues = {
   email: string;
   password: string;
   passwordConfirmation?: string;
@@ -21,7 +22,7 @@ type AuthFormValues = {
 
 type Props = {
   onFormSubmit: (values: AuthFormValues) => void;
-  type: "login" | "register";
+  isSignUp: boolean;
   triggerText: string;
 };
 
@@ -34,7 +35,7 @@ const initialValues = {
 };
 
 export const AuthForm: FC<AuthFormProps> = (props) => {
-  const { triggerText, type, onFormSubmit, className, ...rest } = props;
+  const { triggerText, isSignUp, onFormSubmit, className, ...rest } = props;
 
   const validationSchema = useMemo(
     () =>
@@ -42,14 +43,13 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
         .object({
           email: z.string().email(),
           password: z.string().min(6),
-          passwordConfirmation:
-            type === "register" ? z.string().min(6) : z.string().optional(),
+          passwordConfirmation: isSignUp
+            ? z.string().min(6)
+            : z.string().optional(),
         })
         .refine(
           (data) =>
-            type === "register"
-              ? data.password === data.passwordConfirmation
-              : true,
+            isSignUp ? data.password === data.passwordConfirmation : true,
           {
             path: ["passwordConfirmation"],
             message: "Passwords do not match",
@@ -100,7 +100,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
         type="password"
         errorMessage={errors.password?.message}
       />
-      {type === "register" && (
+      {isSignUp && (
         <Input
           {...register("passwordConfirmation")}
           label="Password"

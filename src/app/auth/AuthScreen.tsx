@@ -8,29 +8,32 @@ import {
 } from "react";
 
 import { Grid } from "@/components/base/Grid";
-import { AuthForm } from "../../components/forms/AuthForm";
+import { AuthForm, AuthFormValues } from "../../components/forms/AuthForm";
 import { Heading } from "../ui/Heading";
 
-type Props = {};
+type Props = {
+  onSignIn: (values: AuthFormValues) => Promise<any>;
+  onSignUp: (values: AuthFormValues) => Promise<any>;
+};
 
-type AuthType = "login" | "register";
+export type AuthScreenType = "sign-in" | "sign-up";
 
 export type AuthScreenProps = ComponentPropsWithoutRef<"div"> & Props;
 
 export const AuthScreen: FC<AuthScreenProps> = (props) => {
-  const { className, ...rest } = props;
-  const [authType, setAuthType] = useState<AuthType>("login");
+  const { onSignIn, onSignUp, className, ...rest } = props;
+  const [authType, setAuthType] = useState<AuthScreenType>("sign-in");
 
-  const tabs = useMemo<TabItem<AuthType>[]>(
+  const tabs = useMemo<TabItem<AuthScreenType>[]>(
     () => [
-      { id: "login", title: "Has account" },
-      { id: "register", title: "No account" },
+      { id: "sign-in", title: "Has account" },
+      { id: "sign-up", title: "No account" },
     ],
     []
   );
 
   const headingText = useMemo(() => {
-    if (authType === "login")
+    if (authType === "sign-in")
       return {
         title: "Sign In",
         description: "Provide base data to sign in in system",
@@ -68,9 +71,9 @@ export const AuthScreen: FC<AuthScreenProps> = (props) => {
       </Grid>
 
       <AuthForm
-        type={authType}
-        triggerText={authType === "login" ? "Sign In" : "Sign Up"}
-        onFormSubmit={() => undefined}
+        isSignUp={authType === "sign-up"}
+        triggerText={authType === "sign-in" ? "Sign In" : "Sign Up"}
+        onFormSubmit={authType === "sign-in" ? onSignIn : onSignUp}
       />
     </Grid>
   );
