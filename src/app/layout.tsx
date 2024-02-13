@@ -1,5 +1,6 @@
 import { SITE_DESCRIPTION, SITE_NAME } from "@/const";
-import "@/styles/index.css";
+import "@/styles/index.scss";
+import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { RootProviders } from "./providers";
@@ -21,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={clsx(inter.className, "dark text-foreground bg-background")}
+      >
         <RootProviders>{children}</RootProviders>
       </body>
     </html>

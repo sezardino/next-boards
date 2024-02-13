@@ -1,4 +1,3 @@
-import { COLORS } from "@/const";
 import { nextui } from "@nextui-org/react";
 import type { Config } from "tailwindcss";
 
@@ -9,8 +8,8 @@ const config: Config = {
     "./src/libs/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
-    colors: COLORS,
     container: {
       padding: "16px",
       center: true,

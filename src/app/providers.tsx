@@ -1,3 +1,6 @@
+"use client";
+
+import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, PropsWithChildren, useState } from "react";
 import { Toaster } from "sonner";
@@ -14,8 +17,10 @@ export const RootProviders: FC<PropsWithChildren> = (props) => {
 
   return (
     <QueryClientProvider client={client}>
-      {children}
-      <Toaster theme="dark" position="top-center" duration={2000} />
+      <NextUIProvider>
+        {children}
+        <Toaster theme="dark" position="top-center" duration={2000} />
+      </NextUIProvider>
     </QueryClientProvider>
   );
 };
