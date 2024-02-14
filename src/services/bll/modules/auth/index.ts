@@ -31,6 +31,6 @@ export class AuthBllModule extends BllModule {
 
     if (userResponse) this.throw(SignUpError.EmailAlreadyExists);
 
-    return this.userModule.create(dto);
+    this.userModule.create(dto);
   }
 }

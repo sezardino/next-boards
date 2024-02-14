@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type } from "os";
 import {
   useEffect,
   useMemo,
@@ -12,7 +13,6 @@ import { z } from "zod";
 import { Button } from "../base/Button";
 import { Grid } from "../base/Grid";
 import { Input } from "../base/Input";
-import { type } from "os";
 
 export type AuthFormValues = {
   email: string;
@@ -21,7 +21,7 @@ export type AuthFormValues = {
 };
 
 type Props = {
-  onFormSubmit: (values: AuthFormValues) => void;
+  onFormSubmit: (values: AuthFormValues) => Promise<any>;
   isSignUp: boolean;
   triggerText: string;
 };
@@ -55,7 +55,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
             message: "Passwords do not match",
           }
         ),
-    [type]
+    [isSignUp]
   );
 
   const {
@@ -64,13 +64,17 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     getValues,
     formState: { errors },
     setError,
+    reset,
   } = useForm<AuthFormValues>({
     resolver: zodResolver(validationSchema),
     defaultValues: initialValues,
   });
 
-  const submitHandler = handleSubmit((values) => {
-    console.log(values);
+  const submitHandler = handleSubmit(async (values) => {
+    try {
+      await onFormSubmit(values);
+      reset();
+    } catch (error) {}
   });
 
   useEffect(() => {
@@ -92,12 +96,14 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       <Input
         {...register("email")}
         label="Email"
+        placeholder="example@mail.com"
         errorMessage={errors.email?.message}
       />
       <Input
         {...register("password")}
         label="Password"
         type="password"
+        placeholder="******"
         errorMessage={errors.password?.message}
       />
       {isSignUp && (
@@ -105,7 +111,8 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
           {...register("passwordConfirmation")}
           label="Password"
           type="password"
-          errorMessage={errors.email?.message}
+          placeholder="******"
+          errorMessage={errors.passwordConfirmation?.message}
         />
       )}
 

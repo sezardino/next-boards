@@ -13,7 +13,7 @@ export enum SignUpError {
 }
 
 export const signUpResponseSchema = z.object({
-  error: z.nativeEnum(SignUpError),
+  error: z.nativeEnum(SignUpError).optional(),
 });
 
 export type SignUpResponse = z.infer<typeof signUpResponseSchema>;

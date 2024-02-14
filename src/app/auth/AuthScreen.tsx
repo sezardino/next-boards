@@ -1,6 +1,7 @@
 import { TabItem, Tabs } from "@/components/base/Tabs";
 import { clsx } from "clsx";
 import {
+  useCallback,
   useMemo,
   useState,
   type ComponentPropsWithoutRef,
@@ -9,7 +10,7 @@ import {
 
 import { Grid } from "@/components/base/Grid";
 import { AuthForm, AuthFormValues } from "../../components/forms/AuthForm";
-import { Heading } from "../ui/Heading";
+import { Heading } from "../../components/ui/Heading";
 
 type Props = {
   onSignIn: (values: AuthFormValues) => Promise<any>;
@@ -45,6 +46,16 @@ export const AuthScreen: FC<AuthScreenProps> = (props) => {
     };
   }, [authType]);
 
+  const signUpHandler = useCallback(
+    async (values: AuthFormValues) => {
+      try {
+        await onSignUp(values);
+        setAuthType("sign-in");
+      } catch (error) {}
+    },
+    [onSignUp]
+  );
+
   return (
     <Grid
       tag="section"
@@ -73,7 +84,7 @@ export const AuthScreen: FC<AuthScreenProps> = (props) => {
       <AuthForm
         isSignUp={authType === "sign-up"}
         triggerText={authType === "sign-in" ? "Sign In" : "Sign Up"}
-        onFormSubmit={authType === "sign-in" ? onSignIn : onSignUp}
+        onFormSubmit={authType === "sign-in" ? onSignIn : signUpHandler}
       />
     </Grid>
   );

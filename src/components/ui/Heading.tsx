@@ -42,7 +42,7 @@ export const Heading: FC<HeadingProps> = (props) => {
   } = description || {};
   const {
     text: titleText,
-    styling: titleStyling = "3xl",
+    styling: titleStyling = "xl",
     color: titleColor = "default",
     weight: titleWeight = "bold",
     ...restTitle

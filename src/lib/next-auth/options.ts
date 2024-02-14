@@ -24,7 +24,9 @@ export const nextAuthOptions: AuthOptions = {
 
           return Promise.reject({ message: "not found" });
         } catch (error) {
-          return Promise.reject({ message: error });
+          return Promise.reject({
+            message: (error as { error: string }).error,
+          });
         }
       },
     }),

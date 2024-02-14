@@ -2,36 +2,40 @@
 
 import { AuthScreen } from "@/app/auth/AuthScreen";
 import { AuthFormValues } from "@/components/forms/AuthForm";
+import { PageUrls } from "@/const/url";
+import { useSignUpMutation } from "@/hooks/mutations/auth/sign-up";
 
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { toast } from "sonner";
 
 const AuthPage = () => {
-  const loginHandler = useCallback(async (values: AuthFormValues) => {
-    let res = await signIn("credentials", {
-      ...values,
-      redirect: false,
-    });
+  const { mutateAsync: signUp } = useSignUpMutation();
+  const router = useRouter();
 
-    if (res?.ok) {
-      toast("Success login", { description: "Welcome back!" });
+  const loginHandler = useCallback(
+    async (values: AuthFormValues) => {
+      let res = await signIn("credentials", {
+        ...values,
+        redirect: false,
+      });
 
-      // router.replace(PublicPageUrls.home);
-      return;
-    } else {
-      console.log(res);
-      toast("Error login", { description: "Something went wrong" });
-    }
+      if (res?.ok) {
+        toast("Success login", { description: "Welcome back!" });
 
-    return res;
-  }, []);
+        router.replace(PageUrls.home);
+        return;
+      } else {
+        toast("Error login", { description: res?.error });
+      }
 
-  const signUpHandler = useCallback(async (values: AuthFormValues) => {
-    console.log("Sign up", values);
-  }, []);
+      return res;
+    },
+    [router]
+  );
 
-  return <AuthScreen onSignIn={loginHandler} onSignUp={signUpHandler} />;
+  return <AuthScreen onSignIn={loginHandler} onSignUp={signUp} />;
 };
 
 export default AuthPage;

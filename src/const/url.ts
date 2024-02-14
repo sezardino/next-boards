@@ -1,6 +1,4 @@
 export const PageUrls = {
-  auth: {
-    login: "/auth/login",
-    register: "/auth/register",
-  },
+  auth: "/auth",
+  home: "/",
 } as const;
