@@ -1,3 +1,5 @@
+import { MAX_BOARDS_COUNT } from "@/const";
+import { EntityStatus } from "@prisma/client";
 import { BllModule } from "../../utils";
 import {
   AddColumnError,
@@ -9,23 +11,70 @@ import {
   ChangeTaskColumnError,
   ChangeTaskColumnRequest,
   ColumnsOrderRequest,
+  CreateBoardRequest,
   TasksOrderRequest,
 } from "./dto";
+import { AllBoardsRequest } from "./dto/all-boards";
+import { ArchiveBoardError, ArchiveBoardRequest } from "./dto/archive-board";
 
 export class BoardBllModule extends BllModule {
-  getAll(userId: string) {
-    return this.prismaService.board.findMany({ where: { userId } });
+  getAll(dto: AllBoardsRequest, userId: string) {
+    return this.prismaService.board.findMany({
+      where: { userId, status: dto.status || EntityStatus.ACTIVE },
+    });
   }
 
   async getById(dto: BoardByIdRequest, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id: dto.id, userId },
+      where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
       include: { columns: { include: { tasks: true } } },
     });
 
     if (!neededBoard) this.throw(BoardByIdError.NotFound);
 
     return neededBoard;
+  }
+
+  async createBoard(dto: CreateBoardRequest, userId: string) {
+    const boardsCount = await this.prismaService.board.count({
+      where: { userId, status: EntityStatus.ACTIVE },
+    });
+
+    if (boardsCount >= MAX_BOARDS_COUNT)
+      this.throw(AddColumnError.BoardNotFound);
+
+    return await this.prismaService.board.create({
+      data: { title: dto.title, user: { connect: { id: userId } } },
+      select: { id: true, title: true },
+    });
+  }
+
+  async archiveBoard(dto: ArchiveBoardRequest, userId: string) {
+    const neededBoard = await this.prismaService.board.findUnique({
+      where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
+      select: { id: true },
+    });
+
+    if (!neededBoard) this.throw(ArchiveBoardError.NotFound);
+
+    return this.prismaService.board.update({
+      where: { id: dto.id },
+      data: { status: EntityStatus.DELETED },
+    });
+  }
+
+  async deleteBoard(dto: BoardByIdRequest, userId: string) {
+    const neededBoard = await this.prismaService.board.findUnique({
+      where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
+      select: { id: true },
+    });
+
+    if (!neededBoard) this.throw(BoardByIdError.NotFound);
+
+    return this.prismaService.board.update({
+      where: { id: dto.id },
+      data: { status: EntityStatus.INACTIVE },
+    });
   }
 
   async addColumn(dto: AddColumnRequest) {
