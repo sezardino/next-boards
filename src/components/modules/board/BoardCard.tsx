@@ -50,7 +50,7 @@ export const BoardCard: FC<BoardCardProps> = (props) => {
   return (
     <Card {...rest}>
       <CardHeader className="flex gap-3">
-        <Icon name={icon} size={40} />
+        <Icon name={icon} size={32} />
         <Heading title={{ text: title, tag: "h3", styling: "md" }} />
       </CardHeader>
       <Divider />
