@@ -48,7 +48,7 @@ export const BoardCard: FC<BoardCardProps> = (props) => {
   }, [columns, tasks]);
 
   return (
-    <Card {...rest}>
+    <Card as="article" {...rest}>
       <CardHeader className="flex gap-3">
         <Icon name={icon} size={32} />
         <Heading title={{ text: title, tag: "h3", styling: "md" }} />
