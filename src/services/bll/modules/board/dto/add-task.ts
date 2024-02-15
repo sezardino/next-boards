@@ -1,7 +1,7 @@
 import { Priority } from "@prisma/client";
 import { z } from "zod";
 
-export const addTaskRequestSchema = z.object({
+export const addTaskDtoSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   priority: z.nativeEnum(Priority).optional(),
@@ -9,7 +9,7 @@ export const addTaskRequestSchema = z.object({
   columnId: z.string(),
 });
 
-export type AddTaskRequest = z.infer<typeof addTaskRequestSchema>;
+export type AddTaskDto = z.infer<typeof addTaskDtoSchema>;
 
 export enum AddTaskError {
   WrongData = "WrongData",

@@ -2,29 +2,30 @@ import { MAX_BOARDS_COUNT } from "@/const";
 import { EntityStatus } from "@prisma/client";
 import { BllModule } from "../../utils";
 import {
+  AddColumnDto,
   AddColumnError,
-  AddColumnRequest,
+  AddTaskDto,
   AddTaskError,
-  AddTaskRequest,
+  AllBoardsDto,
+  ArchiveBoardDto,
+  ArchiveBoardError,
+  BoardByIdDto,
   BoardByIdError,
-  BoardByIdRequest,
+  ChangeTaskColumnDto,
   ChangeTaskColumnError,
-  ChangeTaskColumnRequest,
-  ColumnsOrderRequest,
-  CreateBoardRequest,
-  TasksOrderRequest,
+  ColumnsOrderDto,
+  CreateBoardDto,
+  TasksOrderDto,
 } from "./dto";
-import { AllBoardsRequest } from "./dto/all-boards";
-import { ArchiveBoardError, ArchiveBoardRequest } from "./dto/archive-board";
 
 export class BoardBllModule extends BllModule {
-  getAll(dto: AllBoardsRequest, userId: string) {
+  getAll(dto: AllBoardsDto, userId: string) {
     return this.prismaService.board.findMany({
       where: { userId, status: dto.status || EntityStatus.ACTIVE },
     });
   }
 
-  async getById(dto: BoardByIdRequest, userId: string) {
+  async getById(dto: BoardByIdDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
       include: { columns: { include: { tasks: true } } },
@@ -35,7 +36,7 @@ export class BoardBllModule extends BllModule {
     return neededBoard;
   }
 
-  async createBoard(dto: CreateBoardRequest, userId: string) {
+  async createBoard(dto: CreateBoardDto, userId: string) {
     const boardsCount = await this.prismaService.board.count({
       where: { userId, status: EntityStatus.ACTIVE },
     });
@@ -49,7 +50,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async archiveBoard(dto: ArchiveBoardRequest, userId: string) {
+  async archiveBoard(dto: ArchiveBoardDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
       select: { id: true },
@@ -63,7 +64,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async deleteBoard(dto: BoardByIdRequest, userId: string) {
+  async deleteBoard(dto: BoardByIdDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
       select: { id: true },
@@ -77,7 +78,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async addColumn(dto: AddColumnRequest) {
+  async addColumn(dto: AddColumnDto) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.boardId },
       select: { _count: { select: { columns: true } } },
@@ -95,7 +96,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async columnsOrder(dto: ColumnsOrderRequest, userId: string) {
+  async columnsOrder(dto: ColumnsOrderDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.boardId, userId },
       select: { id: true },
@@ -113,7 +114,7 @@ export class BoardBllModule extends BllModule {
     );
   }
 
-  async addTask(dto: AddTaskRequest, userId: string) {
+  async addTask(dto: AddTaskDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: {
         id: dto.boardId,
@@ -136,7 +137,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async tasksOrder(dto: TasksOrderRequest, userId: string) {
+  async tasksOrder(dto: TasksOrderDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: {
         id: dto.boardId,
@@ -158,7 +159,7 @@ export class BoardBllModule extends BllModule {
     );
   }
 
-  async taskColumn(dto: ChangeTaskColumnRequest, userId: string) {
+  async taskColumn(dto: ChangeTaskColumnDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: {
         id: dto.boardId,

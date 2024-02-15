@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const boardByIdRequestSchema = z.object({
+export const boardByIdDtoSchema = z.object({
   id: z.string(),
 });
 
-export type BoardByIdRequest = z.infer<typeof boardByIdRequestSchema>;
+export type BoardByIdDto = z.infer<typeof boardByIdDtoSchema>;
 
 export enum BoardByIdError {
   NotFound = "NotFound",

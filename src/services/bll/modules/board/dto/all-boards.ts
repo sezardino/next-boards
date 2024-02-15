@@ -1,11 +1,11 @@
 import { EntityStatus } from "@prisma/client";
 import { z } from "zod";
 
-export const allBoardsRequestSchema = z.object({
+export const allBoardsDtoSchema = z.object({
   status: z.enum([EntityStatus.ACTIVE, EntityStatus.INACTIVE]).optional(),
 });
 
-export type AllBoardsRequest = z.infer<typeof allBoardsRequestSchema>;
+export type AllBoardsDto = z.infer<typeof allBoardsDtoSchema>;
 
 export const allBoardsResponseSchema = z.object({
   boards: z.array(

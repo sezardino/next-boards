@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const userPasswordSettingsRequestSchema = z.object({
+export const userPasswordSettingsDtoSchema = z.object({
   oldPassword: z.string().min(6),
   newPassword: z.string().min(6),
 });
 
-export type UserPasswordSettingsRequest = z.infer<
-  typeof userPasswordSettingsRequestSchema
+export type UserPasswordSettingsDto = z.infer<
+  typeof userPasswordSettingsDtoSchema
 >;
 
 export enum UserPasswordSettingsError {

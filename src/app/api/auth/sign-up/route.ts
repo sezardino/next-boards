@@ -1,15 +1,12 @@
 import { bllService } from "@/services/bll";
-import {
-  SignUpRequest,
-  signUpRequestSchema,
-} from "@/services/bll/modules/auth/dto";
+import { SignUpDto, signUpDtoSchema } from "@/services/bll/modules/auth/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { withValidation } from "../../utils";
 
 const handler = async (req: NextRequest) => {
   try {
-    const body = (await req.json()) as SignUpRequest;
+    const body = (await req.json()) as SignUpDto;
 
     await bllService.auth.signUp(body);
 
@@ -26,4 +23,4 @@ const handler = async (req: NextRequest) => {
   }
 };
 
-export const POST = withValidation({ schema: signUpRequestSchema, handler });
+export const POST = withValidation({ schema: signUpDtoSchema, handler });

@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const tasksOrderRequestSchema = z.object({
+export const tasksOrderDtoSchema = z.object({
   boardId: z.string(),
   columnId: z.string(),
   tasks: z.array(z.string()),
 });
 
-export type TasksOrderRequest = z.infer<typeof tasksOrderRequestSchema>;
+export type TasksOrderDto = z.infer<typeof tasksOrderDtoSchema>;
 
 export const tasksOrderResponseSchema = z.object({});
 

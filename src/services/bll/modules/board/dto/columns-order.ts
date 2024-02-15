@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const columnsOrderRequestSchema = z.object({
+export const columnsOrderDtoSchema = z.object({
   boardId: z.string(),
   columns: z.array(z.string()),
 });
 
-export type ColumnsOrderRequest = z.infer<typeof columnsOrderRequestSchema>;
+export type ColumnsOrderDto = z.infer<typeof columnsOrderDtoSchema>;
 
 export enum ColumnsOrderError {
   NotFound = "NotFound",

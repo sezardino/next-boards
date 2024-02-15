@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const archiveBoardRequestSchema = z.object({
+export const archiveBoardDtoSchema = z.object({
   id: z.string(),
 });
 
-export type ArchiveBoardRequest = z.infer<typeof archiveBoardRequestSchema>;
+export type ArchiveBoardDto = z.infer<typeof archiveBoardDtoSchema>;
 
 export enum ArchiveBoardError {
   NotFound = "Board not found",

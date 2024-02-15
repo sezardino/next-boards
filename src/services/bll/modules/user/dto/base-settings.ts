@@ -1,13 +1,11 @@
 import { z } from "zod";
 
-export const userBaseSettingsRequestSchema = z.object({
+export const userBaseSettingsDtoSchema = z.object({
   name: z.string().optional(),
   email: z.string().email().optional(),
 });
 
-export type UserBaseSettingsRequest = z.infer<
-  typeof userBaseSettingsRequestSchema
->;
+export type UserBaseSettingsDto = z.infer<typeof userBaseSettingsDtoSchema>;
 
 export enum UserBaseSettingsError {
   NotFound = "NotFound",

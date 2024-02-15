@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const signUpRequestSchema = z.object({
+export const signUpDtoSchema = z.object({
   login: z.string(),
   password: z.string(),
 });
 
-export type SignUpRequest = z.infer<typeof signUpRequestSchema>;
+export type SignUpDto = z.infer<typeof signUpDtoSchema>;
 
 export enum SignUpError {
   LoginAlreadyExists = "Login is already in use",

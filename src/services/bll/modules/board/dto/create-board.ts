@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const createBoardRequestSchema = z.object({
+export const createBoardDtoSchema = z.object({
   title: z.string(),
 });
 
-export type CreateBoardRequest = z.infer<typeof createBoardRequestSchema>;
+export type CreateBoardDto = z.infer<typeof createBoardDtoSchema>;
 
 export enum CreateBoardError {
   // MAX_BOARDS_COUNT = 10

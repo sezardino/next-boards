@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const signInRequestSchema = z.object({
+export const signInDtoSchema = z.object({
   login: z.string(),
   password: z.string(),
 });
 
-export type SignInRequest = z.infer<typeof signInRequestSchema>;
+export type SignInDto = z.infer<typeof signInDtoSchema>;
 
 export enum SignInError {
   WrongCredentials = "Wrong credentials",

@@ -2,7 +2,9 @@ import { PrismaService } from "@/lib/prisma";
 import { hashService } from "@/services/hash";
 import { BllModule } from "../../utils";
 import { UserBllModule } from "../user";
-import { SignInError, SignUpError, SignUpRequest } from "./dto";
+import { SignInDto, SignInError, SignUpDto, SignUpError } from "./dto";
+
+export * from "./dto";
 
 export class AuthBllModule extends BllModule {
   constructor(
@@ -12,7 +14,7 @@ export class AuthBllModule extends BllModule {
     super(prismaService);
   }
 
-  async signIn(dto: SignUpRequest) {
+  async signIn(dto: SignInDto) {
     const userResponse = await this.userModule.getByLogin(dto.login);
 
     if (!userResponse) this.throw(SignInError.WrongCredentials);
@@ -26,7 +28,7 @@ export class AuthBllModule extends BllModule {
     return user;
   }
 
-  async signUp(dto: SignUpRequest) {
+  async signUp(dto: SignUpDto) {
     const userResponse = await this.userModule.getByLogin(dto.login);
 
     if (userResponse) this.throw(SignUpError.LoginAlreadyExists);

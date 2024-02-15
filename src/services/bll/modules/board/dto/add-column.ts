@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const addColumnRequestSchema = z.object({
+export const addColumnDtoSchema = z.object({
   boardId: z.string(),
   title: z.string(),
 });
 
-export type AddColumnRequest = z.infer<typeof addColumnRequestSchema>;
+export type AddColumnDto = z.infer<typeof addColumnDtoSchema>;
 
 export enum AddColumnError {
   BoardNotFound = "BoardNotFound",
