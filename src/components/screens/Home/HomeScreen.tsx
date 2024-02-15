@@ -1,11 +1,12 @@
 "use client";
 
-import { Grid } from "@/components/base/Grid";
+import { Grid } from "@/components/base/Grid/Grid";
 import styles from "./HomeScreen.module.scss";
 
 import { SearchForm } from "@/components/base/SearchForm";
-import { BoardCard } from "@/components/modules/board/BoardCard";
-import { Heading } from "@/components/ui/Heading";
+import { BoardCard } from "@/components/modules/board/BoardCard/BoardCard";
+import { Heading } from "@/components/ui/Heading/Heading";
+import { Button } from "@nextui-org/react";
 import clsx from "clsx";
 import { ComponentPropsWithoutRef, FC } from "react";
 
@@ -27,10 +28,18 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
         description={{ text: "Manage your boards" }}
         withDivider
       />
-      <Grid gap={4}>
-        <div className={styles.filters}>
-          <SearchForm onSearch={onSearchChange} />
+
+      <Grid gap="4">
+        <div className={styles.wrapper}>
+          <div>
+            {/* TODO: add select with check active/archive */}
+            <SearchForm onSearch={onSearchChange} />
+          </div>
+
+          {/* TODO: and handler for open modal with form */}
+          <Button color="primary">Create board</Button>
         </div>
+
         <ul className={styles.list}>
           {new Array(10).fill(0).map((_, i) => (
             <li key={i}>

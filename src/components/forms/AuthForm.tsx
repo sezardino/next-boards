@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../base/Button";
-import { Grid } from "../base/Grid";
+import { Grid } from "../base/Grid/Grid";
 import { Input } from "../base/Input";
 
 export type AuthFormValues = {
@@ -88,7 +88,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   return (
     <Grid
       tag="form"
-      gap={4}
+      gap="4"
       {...rest}
       className={className}
       onSubmit={submitHandler}

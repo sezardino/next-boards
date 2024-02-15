@@ -1,6 +1,6 @@
 import { Icon, IconNames } from "@/components/base/Icon";
-import { Typography } from "@/components/base/Typography";
-import { Heading } from "@/components/ui/Heading";
+import { Typography } from "@/components/base/Typography/Typography";
+import { Heading } from "@/components/ui/Heading/Heading";
 import {
   Card,
   CardBody,
@@ -11,6 +11,8 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { useMemo, type FC } from "react";
+
+import styles from "./BoardCard.module.scss";
 
 type Props = {
   icon?: IconNames;
@@ -49,7 +51,7 @@ export const BoardCard: FC<BoardCardProps> = (props) => {
 
   return (
     <Card as="article" {...rest}>
-      <CardHeader className="flex gap-3">
+      <CardHeader className={styles.header}>
         <Icon name={icon} size={32} />
         <Heading title={{ text: title, tag: "h3", styling: "md" }} />
       </CardHeader>
@@ -64,13 +66,10 @@ export const BoardCard: FC<BoardCardProps> = (props) => {
         </Typography>
       </CardBody>
       <Divider />
-      <CardFooter className="flex items-center gap-3 flex-wrap justify-between">
-        <ul
-          aria-label="board statistic"
-          className="flex items-center gap-3 flex-wrap"
-        >
+      <CardFooter className={styles.footer}>
+        <ul aria-label="board statistic" className={styles.statistics}>
           {statistic.map((item) => (
-            <li key={item.icon} className="flex items-center gap-1">
+            <li key={item.icon} className={styles.statistic}>
               <Icon name={item.icon} size={14} />
               <Typography tag="span" styling="xs">
                 {item.value}
@@ -78,10 +77,7 @@ export const BoardCard: FC<BoardCardProps> = (props) => {
             </li>
           ))}
         </ul>
-        <Link
-          href={href}
-          className="flex items-center gap-3 hover:text-primary"
-        >
+        <Link href={href} className={styles.more}>
           See more <Icon name="MoveRight" />
         </Link>
       </CardFooter>

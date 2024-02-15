@@ -2,8 +2,12 @@
   @apply container py-5 grid grid-cols-1 gap-4;
 }
 
-.filters {
+.wrapper {
   @apply flex gap-3 items-center justify-between flex-wrap;
+}
+
+.filters {
+  @apply flex gap-3 items-center flex-wrap;
 }
 
 .list {

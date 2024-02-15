@@ -10,9 +10,9 @@ import {
 
 import styles from "./AuthScreen.module.scss";
 
-import { Grid } from "@/components/base/Grid";
+import { Grid } from "@/components/base/Grid/Grid";
 import { AuthForm, AuthFormValues } from "@/components/forms/AuthForm";
-import { Heading } from "@/components/ui/Heading";
+import { Heading } from "@/components/ui/Heading/Heading";
 
 type Props = {
   onSignIn: (values: AuthFormValues) => Promise<any>;
@@ -61,11 +61,11 @@ export const AuthScreen: FC<AuthScreenProps> = (props) => {
   return (
     <Grid
       tag="section"
-      gap={8}
+      gap="8"
       {...rest}
       className={clsx(styles.element, className)}
     >
-      <Grid gap={2}>
+      <Grid gap="2">
         <Heading
           title={{ tag: "h1", text: headingText.title }}
           description={{ text: headingText.description }}

@@ -1,11 +1,11 @@
-import { Typography, TypographyProps } from "@/components/base/Typography";
+import {
+  Typography,
+  TypographyProps,
+} from "@/components/base/Typography/Typography";
 import clsx from "clsx";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 
-type PickedProps = Pick<
-  TypographyProps,
-  "styling" | "tag" | "color" | "weight"
->;
+import styles from "./Heading.module.scss";
 
 type Props = {
   title: { text: string } & Pick<
@@ -49,7 +49,7 @@ export const Heading: FC<HeadingProps> = (props) => {
   } = title;
 
   return (
-    <As {...rest} className={clsx(withDivider && "pb-4 border-b", className)}>
+    <As {...rest} className={clsx(withDivider && styles.divider, className)}>
       <Typography
         styling={titleStyling}
         color={titleColor}
