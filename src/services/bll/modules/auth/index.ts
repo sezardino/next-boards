@@ -13,13 +13,13 @@ export class AuthBllModule extends BllModule {
   }
 
   async signIn(dto: SignUpRequest) {
-    const userResponse = await this.userModule.getByEmail(dto.email);
+    const userResponse = await this.userModule.getByLogin(dto.login);
 
     if (!userResponse) this.throw(SignInError.WrongCredentials);
 
     const { password, ...user } = userResponse;
 
-    const isPasswordMatch = hashService.compare(dto.password, password);
+    const isPasswordMatch = await hashService.compare(dto.password, password);
 
     if (!isPasswordMatch) this.throw(SignInError.WrongCredentials);
 
@@ -27,9 +27,9 @@ export class AuthBllModule extends BllModule {
   }
 
   async signUp(dto: SignUpRequest) {
-    const userResponse = await this.userModule.getByEmail(dto.email);
+    const userResponse = await this.userModule.getByLogin(dto.login);
 
-    if (userResponse) this.throw(SignUpError.EmailAlreadyExists);
+    if (userResponse) this.throw(SignUpError.LoginAlreadyExists);
 
     this.userModule.create(dto);
   }

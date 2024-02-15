@@ -10,11 +10,11 @@ export const nextAuthOptions: AuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "email" },
+        login: { label: "Login", type: "login", placeholder: "login" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials || !credentials.email || !credentials.password)
+        if (!credentials || !credentials.login || !credentials.password)
           return Promise.reject({ message: "no credentials" });
 
         try {

@@ -1,7 +1,7 @@
 "use client";
 
-import { AuthScreen } from "@/app/auth/AuthScreen";
 import { AuthFormValues } from "@/components/forms/AuthForm";
+import { AuthScreen } from "@/components/screens/Auth/AuthScreen";
 import { PageUrls } from "@/const/url";
 import { useSignUpMutation } from "@/hooks/mutations/auth/sign-up";
 
@@ -28,6 +28,7 @@ const AuthPage = () => {
         return;
       } else {
         toast("Error login", { description: res?.error });
+        return Promise.reject();
       }
 
       return res;

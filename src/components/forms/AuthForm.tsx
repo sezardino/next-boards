@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type } from "os";
 import {
   useEffect,
   useMemo,
@@ -15,7 +14,7 @@ import { Grid } from "../base/Grid/Grid";
 import { Input } from "../base/Input";
 
 export type AuthFormValues = {
-  email: string;
+  login: string;
   password: string;
   passwordConfirmation?: string;
 };
@@ -29,7 +28,7 @@ type Props = {
 export type AuthFormProps = ComponentPropsWithoutRef<"form"> & Props;
 
 const initialValues = {
-  email: "",
+  login: "",
   password: "",
   passwordConfirmation: "",
 };
@@ -41,7 +40,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     () =>
       z
         .object({
-          email: z.string().email(),
+          login: z.string(),
           password: z.string().min(6),
           passwordConfirmation: isSignUp
             ? z.string().min(6)
@@ -80,10 +79,10 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   useEffect(() => {
     const values = getValues();
 
-    if (!values.email) setError("email", {});
+    if (!values.login) setError("login", {});
     if (!values.password) setError("password", {});
     if (!values.passwordConfirmation) setError("passwordConfirmation", {});
-  }, [type]);
+  }, [isSignUp]);
 
   return (
     <Grid
@@ -94,10 +93,10 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       onSubmit={submitHandler}
     >
       <Input
-        {...register("email")}
-        label="Email"
-        placeholder="example@mail.com"
-        errorMessage={errors.email?.message}
+        {...register("login")}
+        label="Login"
+        placeholder="FunnyCat123"
+        errorMessage={errors.login?.message}
       />
       <Input
         {...register("password")}

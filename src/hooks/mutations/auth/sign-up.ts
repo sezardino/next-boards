@@ -8,10 +8,7 @@ export const useSignUpMutation = () => {
 
   return useMutationHelper({
     mutationFn: (data: SignUpRequest) => apiService.auth.signUp(data),
-    errorToast: {
-      message: "Error sign up",
-      description: "Something went wrong",
-    },
+    errorToast: "Error sign up",
     successToast: {
       message: "Success sign up",
       description: "Now, you can sign in!",

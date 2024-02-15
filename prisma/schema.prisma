@@ -16,7 +16,7 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  email    String  @unique
+  login    String  @unique
   name     String?
   password String
 
@@ -44,8 +44,10 @@ model Board {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  title  String
-  status EntityStatus @default(ACTIVE)
+  title       String
+  description String       @default("")
+  icon        String?
+  status      EntityStatus @default(ACTIVE)
 
   tasks   Task[]
   columns Column[]

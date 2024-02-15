@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const signUpRequestSchema = z.object({
-  email: z.string().email(),
+  login: z.string(),
   password: z.string(),
 });
 
 export type SignUpRequest = z.infer<typeof signUpRequestSchema>;
 
 export enum SignUpError {
-  EmailAlreadyExists = "EmailAlreadyExists",
-  WrongCredentials = "WrongCredentials",
+  LoginAlreadyExists = "Login is already in use",
+  WrongCredentials = "Wrong credentials",
 }
 
 export const signUpResponseSchema = z.object({

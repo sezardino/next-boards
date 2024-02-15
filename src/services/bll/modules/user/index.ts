@@ -8,8 +8,8 @@ import {
 } from "./dto";
 
 export class UserBllModule extends BllModule {
-  getByEmail(email: string) {
-    return this.prismaService.user.findUnique({ where: { email } });
+  getByLogin(login: string) {
+    return this.prismaService.user.findUnique({ where: { login } });
   }
 
   getById(id: string) {
@@ -21,7 +21,7 @@ export class UserBllModule extends BllModule {
 
     return this.prismaService.user.create({
       data: {
-        email: dto.email,
+        login: dto.login,
         password: hashedPassword,
       },
     });

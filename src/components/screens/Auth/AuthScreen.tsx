@@ -50,10 +50,8 @@ export const AuthScreen: FC<AuthScreenProps> = (props) => {
 
   const signUpHandler = useCallback(
     async (values: AuthFormValues) => {
-      try {
-        await onSignUp(values);
-        setAuthType("sign-in");
-      } catch (error) {}
+      await onSignUp(values);
+      setAuthType("sign-in");
     },
     [onSignUp]
   );

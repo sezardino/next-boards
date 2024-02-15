@@ -18,7 +18,7 @@ const handler = async (req: NextRequest) => {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });
     }
-
+    console.log(error);
     return NextResponse.json(
       { message: "Sign up failed", error },
       { status: 500 }

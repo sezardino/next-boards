@@ -1,8 +1,10 @@
+import { BllModuleError } from "@/services/bll/utils";
 import {
   UseMutationOptions,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 type GetQueriesToInvalidateFunction<
@@ -20,10 +22,10 @@ interface UseMutationHelper<
   Var extends unknown,
   Res extends unknown,
   Args extends unknown,
-  Err extends unknown
+  Err extends AxiosError<BllModuleError>
 > extends UseMutationOptions<Res, Err, Var, unknown> {
   getQueriesToInvalidate?: GetQueriesToInvalidateFunction<Var, Res, Args>;
-  errorToast?: Toast;
+  errorToast?: string | Toast;
   successToast?: Toast;
   args?: Args;
 }
@@ -32,7 +34,7 @@ export const useMutationHelper = <
   Var extends any,
   Res extends unknown,
   Args extends unknown,
-  Err extends unknown
+  Err extends AxiosError<BllModuleError>
 >(
   props: UseMutationHelper<Var, Res, Args, Err>
 ) => {
@@ -73,16 +75,23 @@ export const useMutationHelper = <
         );
     },
     onError: (err, vars, ctx) => {
+      const response = err.response?.data;
       if (typeof err === "string" && err === "") return;
 
       if (onError) onError(err, vars, ctx);
-      if (errorToast)
+      if (typeof errorToast === "string") {
+        toast(
+          errorToast,
+          typeof response?.error ? { description: response?.error } : undefined
+        );
+      } else if (errorToast) {
         toast(
           errorToast.message,
           errorToast.description
             ? { description: errorToast.description }
             : undefined
         );
+      }
     },
   });
 };

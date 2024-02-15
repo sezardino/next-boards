@@ -1,10 +1,8 @@
 import { PrismaService } from "@/lib/prisma";
 
-export type BllModuleError<T extends string> = { error: T };
+export type BllModuleError = { error: string };
 
-export const isBllModuleError = (
-  error: unknown
-): error is BllModuleError<string> =>
+export const isBllModuleError = (error: unknown): error is BllModuleError =>
   typeof error === "object" && error !== null && "error" in error;
 
 export abstract class BllModule {
