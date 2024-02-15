@@ -2,6 +2,7 @@ import clsx from "clsx";
 import * as icons from "lucide-react";
 import { FC, SVGProps } from "react";
 
+export const iconNames = Object.keys(icons) as (keyof typeof icons)[];
 export type IconNames = keyof typeof icons;
 export type IconRotate = "45" | "90" | "135" | "180" | "225" | "270" | "315";
 

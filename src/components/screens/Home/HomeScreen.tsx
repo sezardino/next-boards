@@ -4,11 +4,13 @@ import { Grid } from "@/components/base/Grid/Grid";
 import styles from "./HomeScreen.module.scss";
 
 import { SearchForm } from "@/components/base/SearchForm";
+import { BoardForm } from "@/components/forms/Board/BoardForm";
 import { BoardCard } from "@/components/modules/board/BoardCard/BoardCard";
 import { Heading } from "@/components/ui/Heading/Heading";
+import { ModalWithDescription } from "@/components/ui/ModalWithDescription/ModalWithDescription";
 import { Button } from "@nextui-org/react";
 import clsx from "clsx";
-import { ComponentPropsWithoutRef, FC } from "react";
+import { ComponentPropsWithoutRef, FC, useState } from "react";
 
 type Props = {
   // TODO: need to add properly disabled state to form
@@ -20,6 +22,7 @@ export type HomeScreenProps = ComponentPropsWithoutRef<"section"> & Props;
 
 export const HomeScreen: FC<HomeScreenProps> = (props) => {
   const { search, onSearchChange, className, ...rest } = props;
+  const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
 
   return (
     <section {...rest} className={clsx(styles.element, className)}>
@@ -36,8 +39,12 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
             <SearchForm placeholder="Search" onSearch={onSearchChange} />
           </div>
 
-          {/* TODO: and handler for open modal with form */}
-          <Button color="primary">Create board</Button>
+          <Button
+            color="primary"
+            onClick={() => setIsCreateBoardModalOpen(true)}
+          >
+            Create board
+          </Button>
         </div>
 
         <ul className={styles.list}>
@@ -48,6 +55,22 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
           ))}
         </ul>
       </Grid>
+
+      <ModalWithDescription
+        isOpen={isCreateBoardModalOpen}
+        onClose={() => setIsCreateBoardModalOpen(false)}
+        size="xl"
+        heading={{
+          title: { text: "Create board", tag: "h2" },
+          description: { text: "Create new board from scratch" },
+          withDivider: true,
+        }}
+      >
+        <BoardForm
+          onFormSubmit={async () => undefined}
+          onCancelClick={() => setIsCreateBoardModalOpen(false)}
+        />
+      </ModalWithDescription>
     </section>
   );
 };
