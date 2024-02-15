@@ -33,7 +33,7 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
         <div className={styles.wrapper}>
           <div>
             {/* TODO: add select with check active/archive */}
-            <SearchForm onSearch={onSearchChange} />
+            <SearchForm placeholder="Search" onSearch={onSearchChange} />
           </div>
 
           {/* TODO: and handler for open modal with form */}
