@@ -1,0 +1,39 @@
+.element {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header"
+    "main";
+
+  @media (min-width: 768px) {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main";
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  @media (min-width: 768px) {
+    grid-area: sidebar;
+    position: sticky;
+  }
+}
+
+.header {
+  grid-area: header;
+}
+
+.main {
+  grid-area: main;
+}
+
+.backdrop {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden;
+}
