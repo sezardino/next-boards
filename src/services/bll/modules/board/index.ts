@@ -45,8 +45,13 @@ export class BoardBllModule extends BllModule {
       this.throw(AddColumnError.BoardNotFound);
 
     return await this.prismaService.board.create({
-      data: { title: dto.title, user: { connect: { id: userId } } },
-      select: { id: true, title: true },
+      data: {
+        title: dto.title,
+        description: dto.description,
+        icon: dto.icon,
+        user: { connect: { id: userId } },
+      },
+      select: { id: true, title: true, description: true, icon: true },
     });
   }
 

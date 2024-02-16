@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import styles from "./BoardForm.module.scss";
 
-type BoardFormValues = {
+export type BoardFormValues = {
   title: string;
   description: string;
   icon: IconNames;
@@ -61,9 +61,8 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
 
   const submitHandler = handleSubmit(async (values) => {
     try {
-      console.log(1);
       await onFormSubmit(values);
-      reset();
+      // reset();
     } catch (error) {}
   });
 

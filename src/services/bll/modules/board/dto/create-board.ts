@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const createBoardDtoSchema = z.object({
   title: z.string(),
+  description: z.string(),
+  icon: z.string(),
 });
 
 export type CreateBoardDto = z.infer<typeof createBoardDtoSchema>;
@@ -15,6 +17,8 @@ export const createBoardResponseSchema = z.object({
   board: z.object({
     id: z.string(),
     title: z.string(),
+    description: z.string(),
+    icon: z.string(),
   }),
   error: z.nativeEnum(CreateBoardError),
 });

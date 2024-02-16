@@ -4,25 +4,41 @@ import { Grid } from "@/components/base/Grid/Grid";
 import styles from "./HomeScreen.module.scss";
 
 import { SearchForm } from "@/components/base/SearchForm";
-import { BoardForm } from "@/components/forms/Board/BoardForm";
+import { BoardForm, BoardFormValues } from "@/components/forms/Board/BoardForm";
 import { BoardCard } from "@/components/modules/board/BoardCard/BoardCard";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalWithDescription } from "@/components/ui/ModalWithDescription/ModalWithDescription";
+import {
+  CreateBoardDto,
+  CreateBoardResponse,
+} from "@/services/bll/modules/board/dto";
+import { ActionProps } from "@/types";
 import { Button } from "@nextui-org/react";
 import clsx from "clsx";
-import { ComponentPropsWithoutRef, FC, useState } from "react";
+import { ComponentPropsWithoutRef, FC, useCallback, useState } from "react";
 
 type Props = {
   // TODO: need to add properly disabled state to form
   search: string;
   onSearchChange: (value: string) => void;
+  createBoardAction: ActionProps<CreateBoardDto, CreateBoardResponse>;
 };
 
 export type HomeScreenProps = ComponentPropsWithoutRef<"section"> & Props;
 
 export const HomeScreen: FC<HomeScreenProps> = (props) => {
-  const { search, onSearchChange, className, ...rest } = props;
+  const { createBoardAction, search, onSearchChange, className, ...rest } =
+    props;
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
+
+  const createBoardHandler = useCallback(
+    async (values: BoardFormValues) => {
+      console.log(values);
+      await createBoardAction.action(values);
+      setIsCreateBoardModalOpen(false);
+    },
+    [createBoardAction]
+  );
 
   return (
     <section {...rest} className={clsx(styles.element, className)}>
@@ -67,7 +83,7 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
         }}
       >
         <BoardForm
-          onFormSubmit={async () => undefined}
+          onFormSubmit={createBoardHandler}
           onCancelClick={() => setIsCreateBoardModalOpen(false)}
         />
       </ModalWithDescription>
