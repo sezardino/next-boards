@@ -46,7 +46,7 @@ model Board {
 
   title       String
   description String       @default("")
-  icon        String?
+  icon        String       @default("Grid")
   status      EntityStatus @default(ACTIVE)
 
   tasks   Task[]

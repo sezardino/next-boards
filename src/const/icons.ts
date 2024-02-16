@@ -1,6 +1,4 @@
-import { IconNames } from "@/components/base/Icon";
-
-export const PROJECT_ICONS: IconNames[] = [
+export const BOARD_ICONS = [
   "Grid",
   "Columns",
   "Menu",
@@ -92,9 +90,11 @@ export const PROJECT_ICONS: IconNames[] = [
   "Keyboard",
   "Mouse",
   "HardDrive",
-];
+] as const;
 
-export const PROJECT_ICONS_MAP = PROJECT_ICONS.map((icon) => ({
+export type BoardIcon = (typeof BOARD_ICONS)[number];
+
+export const BOARD_ICONS_MAP = BOARD_ICONS.map((icon) => ({
   id: icon,
   value: icon,
 }));

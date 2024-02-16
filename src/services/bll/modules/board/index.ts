@@ -19,9 +19,24 @@ import {
 } from "./dto";
 
 export class BoardBllModule extends BllModule {
-  getAll(dto: AllBoardsDto, userId: string) {
+  getAll(dto: AllBoardsDto = {}, userId: string) {
+    const { search, status } = dto;
+
     return this.prismaService.board.findMany({
-      where: { userId, status: dto.status || EntityStatus.ACTIVE },
+      where: {
+        userId,
+        status: status || EntityStatus.ACTIVE,
+        title: search ? { contains: search } : undefined,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        icon: true,
+        status: true,
+        _count: { select: { columns: true, tasks: true } },
+      },
+      orderBy: { updatedAt: "desc" },
     });
   }
 

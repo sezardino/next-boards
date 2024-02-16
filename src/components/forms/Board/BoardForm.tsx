@@ -1,11 +1,11 @@
 import { type ComponentPropsWithoutRef, type FC } from "react";
 
 import { Button } from "@/components/base/Button";
-import { Icon, IconNames } from "@/components/base/Icon";
+import { Icon } from "@/components/base/Icon";
 import { Input } from "@/components/base/Input";
 import { Textarea } from "@/components/base/Textarea";
 import { Typography } from "@/components/base/Typography/Typography";
-import { PROJECT_ICONS, PROJECT_ICONS_MAP } from "@/const/icons";
+import { BOARD_ICONS, BOARD_ICONS_MAP, BoardIcon } from "@/const/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import clsx from "clsx";
@@ -16,7 +16,7 @@ import styles from "./BoardForm.module.scss";
 export type BoardFormValues = {
   title: string;
   description: string;
-  icon: IconNames;
+  icon: BoardIcon;
 };
 
 type Props = {
@@ -32,18 +32,19 @@ const defaultValues: BoardFormValues = {
   icon: "Grid",
 };
 
+const MAX_TITLE_LENGTH = 50;
+const MAX_DESCRIPTION_LENGTH = 100;
+
 const validationSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(MAX_TITLE_LENGTH, `Max ${MAX_TITLE_LENGTH} characters`),
   description: z
     .string({ required_error: "Description is required" })
-    .min(1, "Description is required"),
-  icon: z
-    .string()
-    .optional()
-    .refine(
-      (icon) => (icon ? PROJECT_ICONS.includes(icon as IconNames) : true),
-      "Invalid icon"
-    ),
+    .max(MAX_DESCRIPTION_LENGTH, `Max ${MAX_DESCRIPTION_LENGTH} characters`)
+    .optional(),
+  icon: z.enum(BOARD_ICONS, { invalid_type_error: "Wrong icon" }),
 });
 
 export const BoardForm: FC<BoardFormProps> = (props) => {
@@ -81,7 +82,7 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
         />
         <Autocomplete
           {...register("icon")}
-          defaultItems={PROJECT_ICONS_MAP}
+          defaultItems={BOARD_ICONS_MAP}
           defaultSelectedKey={defaultValues.icon}
           errorMessage={errors.icon?.message}
           label="Icon"

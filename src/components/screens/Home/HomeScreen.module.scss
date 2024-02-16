@@ -7,9 +7,21 @@
 }
 
 .filters {
-  @apply flex gap-3 items-center flex-wrap;
+  @apply w-full flex gap-3 items-center flex-wrap;
+}
+
+.filter {
+  @apply max-w-56;
+}
+
+.create {
+  @apply flex-1;
 }
 
 .list {
   @apply grid gap-3 grid-cols-[repeat(auto-fill,minmax(300px,1fr))];
+}
+
+.skeleton {
+  @apply h-40 rounded-lg;
 }
