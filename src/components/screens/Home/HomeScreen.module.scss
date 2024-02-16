@@ -3,11 +3,10 @@
 }
 
 .wrapper {
-  @apply flex gap-3 items-center justify-between flex-wrap;
 }
 
 .filters {
-  @apply w-full flex gap-3 items-center flex-wrap;
+  @apply inline-flex gap-3 items-center flex-wrap;
 }
 
 .filter {
@@ -24,4 +23,8 @@
 
 .skeleton {
   @apply h-40 rounded-lg;
+}
+
+.noData {
+  @apply text-center mt-4;
 }

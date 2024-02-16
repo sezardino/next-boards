@@ -16,6 +16,7 @@ export interface SearchFormProps
   onSearch: (value: string) => void;
   initialValue?: string;
   iconPosition?: "left" | "right";
+  disabled?: boolean;
 }
 
 const MIN_SEARCH_LENGTH = 3;
@@ -23,6 +24,7 @@ const MIN_SEARCH_LENGTH = 3;
 export const SearchForm: FC<SearchFormProps> = (props) => {
   const {
     iconPosition = "left",
+    disabled,
     onSearch,
     placeholder,
     className,
@@ -66,6 +68,7 @@ export const SearchForm: FC<SearchFormProps> = (props) => {
     <form {...rest} className={className} onSubmit={submitHandler}>
       <Input
         placeholder={placeholder}
+        disabled={disabled}
         endContent={<Icon name="Search" color="gray" />}
         value={value}
         onChange={(evt) => setValue(evt.currentTarget.value)}

@@ -70,11 +70,15 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
       <Grid gap="4">
         <div className={styles.wrapper}>
           <div className={styles.filters}>
-            {/* TODO: add select with check active/archive */}
-            <SearchForm placeholder="Search" onSearch={onSearchChange} />
+            <SearchForm
+              disabled={(!search && !boards.data?.length) || boards.isLoading}
+              placeholder="Search"
+              onSearch={onSearchChange}
+            />
             <Select
               items={statusFilters}
               defaultSelectedKeys={[statusFilter]}
+              disabled={boards.isLoading}
               labelPlacement="outside"
               className={styles.filter}
               onSelectionChange={(selection) =>
@@ -104,6 +108,14 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
           </Button>
         </div>
         <ul className={styles.list}>
+          {boards.data?.length === 0 && !boards.isLoading && (
+            <li className={styles.noData}>
+              <Typography styling="three-xl" tag="span">
+                {search ? `No boards found for "${search}"` : "No boards found"}
+              </Typography>
+            </li>
+          )}
+
           {boards.isLoading &&
             new Array(10).fill(0).map((_, i) => (
               <li key={i}>
