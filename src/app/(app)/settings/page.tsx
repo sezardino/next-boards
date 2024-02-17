@@ -3,12 +3,12 @@ import { NO_INDEX_PAGE } from "@/const";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Settings",
   ...NO_INDEX_PAGE,
 };
 
-const HomePage = () => {
-  return <Heading title={{ tag: "h1", text: "HomePage" }} withDivider />;
+const SettingsPage = () => {
+  return <Heading title={{ tag: "h1", text: "SettingsPage" }} withDivider />;
 };
 
-export default HomePage;
+export default SettingsPage;

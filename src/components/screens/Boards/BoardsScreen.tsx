@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid } from "@/components/base/Grid/Grid";
-import styles from "./HomeScreen.module.scss";
+import styles from "./BoardsScreen.module.scss";
 
 import { IconNames } from "@/components/base/Icon";
 import { SearchForm } from "@/components/base/SearchForm";
@@ -10,6 +10,7 @@ import { BoardForm, BoardFormValues } from "@/components/forms/Board/BoardForm";
 import { BoardCard } from "@/components/modules/board/BoardCard/BoardCard";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalWithDescription } from "@/components/ui/ModalWithDescription/ModalWithDescription";
+import { PageUrls } from "@/const";
 import {
   AllBoardsResponse,
   CreateBoardDto,
@@ -22,7 +23,6 @@ import clsx from "clsx";
 import { ComponentPropsWithoutRef, FC, useCallback, useState } from "react";
 
 type Props = {
-  // TODO: need to add properly disabled state to form
   search: string;
   onSearchChange: (value: string) => void;
   createBoardAction: ActionProp<CreateBoardDto, CreateBoardResponse>;
@@ -31,14 +31,14 @@ type Props = {
   onStatusFilterChange: (status: EntityStatusWithoutDeleted) => void;
 };
 
-export type HomeScreenProps = ComponentPropsWithoutRef<"section"> & Props;
+export type BoardsScreenProps = ComponentPropsWithoutRef<"section"> & Props;
 
 const statusFilters: { value: EntityStatusWithoutDeleted; label: string }[] = [
   { label: "Active", value: EntityStatus.ACTIVE },
   { label: "Archive", value: EntityStatus.INACTIVE },
 ];
 
-export const HomeScreen: FC<HomeScreenProps> = (props) => {
+export const BoardsScreen: FC<BoardsScreenProps> = (props) => {
   const {
     statusFilter,
     onStatusFilterChange,
@@ -127,7 +127,7 @@ export const HomeScreen: FC<HomeScreenProps> = (props) => {
             boards.data?.map((board) => (
               <li key={board.id}>
                 <BoardCard
-                  href=""
+                  href={PageUrls.board.id(board.id)}
                   title={board.title}
                   columns={board._count.columns}
                   tasks={board._count.tasks}

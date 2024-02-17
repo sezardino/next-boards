@@ -14,8 +14,8 @@ type Props = {
 
 const links: { href: string; label: string; icon: IconNames }[] = [
   { href: PageUrls.home, label: "Home", icon: "Home" },
-  { href: "/2", label: "Settings", icon: "Settings" },
-  { href: "/3", label: "Profile", icon: "User" },
+  { href: PageUrls.board.index, label: "Boards", icon: "CircuitBoard" },
+  { href: PageUrls.settings.index, label: "Settings", icon: "Settings" },
 ];
 
 export type AppSidebarProps = ComponentPropsWithoutRef<"aside"> & Props;

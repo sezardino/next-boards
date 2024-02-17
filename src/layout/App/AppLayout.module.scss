@@ -32,6 +32,8 @@
 
 .main {
   grid-area: main;
+
+  @apply container py-4;
 }
 
 .backdrop {

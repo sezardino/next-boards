@@ -4,11 +4,16 @@ import { AuthFormValues } from "@/components/forms/AuthForm";
 import { AuthScreen } from "@/components/screens/Auth/AuthScreen";
 import { PageUrls } from "@/const/url";
 import { useSignUpMutation } from "@/hooks/mutations/auth/sign-up";
+import { Metadata } from "next";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { toast } from "sonner";
+
+export const metadata: Metadata = {
+  title: "Authorization",
+};
 
 const AuthPage = () => {
   const { mutateAsync: signUp } = useSignUpMutation();
