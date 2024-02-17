@@ -7,7 +7,9 @@ import { useId, useState, type ComponentPropsWithoutRef, type FC } from "react";
 
 import styles from "./AppLayout.module.scss";
 
-export interface AppLayoutProps extends ComponentPropsWithoutRef<"div"> {}
+type Props = {};
+
+export type AppLayoutProps = ComponentPropsWithoutRef<"div"> & Props;
 
 export const AppLayout: FC<AppLayoutProps> = (props) => {
   const { className, children, ...rest } = props;
@@ -15,7 +17,7 @@ export const AppLayout: FC<AppLayoutProps> = (props) => {
   const sidebarId = useId();
 
   return (
-    <div {...rest} className={clsx(styles.element, className)}>
+    <div {...rest} className={styles.element}>
       <AppSidebar
         id={sidebarId}
         isOpen={isSidebarOpen}
@@ -27,7 +29,7 @@ export const AppLayout: FC<AppLayoutProps> = (props) => {
         className={styles.header}
         onSidebarToggle={() => setIsSidebarOpen((prev) => !prev)}
       />
-      <main className={styles.main}>{children}</main>
+      <main className={clsx(styles.main, className)}>{children}</main>
       {isSidebarOpen && (
         <div
           className={styles.backdrop}

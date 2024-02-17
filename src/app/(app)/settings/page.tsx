@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 };
 
 const SettingsPage = () => {
-  return <Heading title={{ tag: "h1", text: "SettingsPage" }} withDivider />;
+  return (
+    <Heading title={{ tag: "h1", text: "General Settings" }} withDivider />
+  );
 };
 
 export default SettingsPage;

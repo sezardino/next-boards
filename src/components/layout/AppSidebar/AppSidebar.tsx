@@ -6,6 +6,7 @@ import { Typography } from "@/components/base/Typography/Typography";
 import { PageUrls } from "@/const";
 import { Chip } from "@nextui-org/react";
 import Link from "next/link";
+import { NavigationList } from "../NavigationList/NavigationList";
 import styles from "./AppSidebar.module.scss";
 
 type Props = {
@@ -45,19 +46,9 @@ export const AppSidebar: FC<AppSidebarProps> = (props) => {
           </Typography>
         </Chip>
       </Link>
-      <ul className={styles.list}>
-        {links.map((link) => (
-          <li key={link.href} className={styles.item}>
-            <Link href={link.href} className={styles.link}>
-              <Icon name={link.icon} aria-hidden="true" />
-
-              <Typography tag="span" styling="sm">
-                {link.label}
-              </Typography>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <nav className={styles.nav}>
+        <NavigationList links={links} />
+      </nav>
       <a
         href="https://github.com/sezardino/next-boards"
         target="_blank"

@@ -14,16 +14,8 @@
   @apply absolute top-0 right-0 translate-x-1/2 translate-y-1/2 rotate-[15deg];
 }
 
-.list {
-  @apply w-full  dark:border-gray-700;
-}
-
-.item {
-  @apply flex items-center p-2 text-base font-normal rounded-lg transition duration-75 hover:bg-gray-700 text-white;
-}
-
-.link {
-  @apply w-full flex items-center gap-2;
+.nav {
+  @apply w-full;
 }
 
 .git {

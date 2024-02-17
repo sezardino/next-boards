@@ -1,0 +1,15 @@
+.element {
+  display: grid;
+
+  @media (min-width: 768px) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+.nav {
+  @apply min-h-full pr-2 border-gray-700 border-r;
+}
+
+.main {
+  @apply pl-2;
+}
