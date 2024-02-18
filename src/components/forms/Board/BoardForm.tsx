@@ -9,7 +9,7 @@ import { BOARD_ICONS, BOARD_ICONS_MAP, BoardIcon } from "@/const/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import clsx from "clsx";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import styles from "./BoardForm.module.scss";
 
@@ -21,7 +21,9 @@ export type BoardFormValues = {
 
 type Props = {
   onFormSubmit: (values: BoardFormValues) => Promise<any>;
-  onCancelClick: () => void;
+  initialValues?: BoardFormValues;
+  onCancelClick?: () => void;
+  type?: "create" | "update";
 };
 
 export type BoardFormProps = ComponentPropsWithoutRef<"form"> & Props;
@@ -48,22 +50,24 @@ const validationSchema = z.object({
 });
 
 export const BoardForm: FC<BoardFormProps> = (props) => {
-  const { onCancelClick, onFormSubmit, className, ...rest } = props;
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<BoardFormValues>({
-    defaultValues,
+    type = "create",
+    initialValues,
+    onCancelClick,
+    onFormSubmit,
+    className,
+    ...rest
+  } = props;
+
+  const { control, handleSubmit, reset } = useForm<BoardFormValues>({
+    defaultValues: initialValues || defaultValues,
     resolver: zodResolver(validationSchema),
   });
 
   const submitHandler = handleSubmit(async (values) => {
     try {
       await onFormSubmit(values);
-      // reset();
+      reset();
     } catch (error) {}
   });
 
@@ -74,49 +78,69 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
       onSubmit={submitHandler}
     >
       <div className={styles.wrapper}>
-        <Input
-          {...register("title")}
-          errorMessage={errors.title?.message}
-          label="Title"
-          placeholder="Study"
-        />
-        <Autocomplete
-          {...register("icon")}
-          defaultItems={BOARD_ICONS_MAP}
-          defaultSelectedKey={defaultValues.icon}
-          errorMessage={errors.icon?.message}
-          label="Icon"
-          placeholder="Grid2X2"
-          classNames={{
-            listboxWrapper: styles.listboxWrapper,
-          }}
-          labelPlacement="outside"
-        >
-          {(icon) => (
-            <AutocompleteItem key={icon.value} textValue={icon.value}>
-              <div className={styles.item}>
-                <Icon name={icon.id} size={20} />
-                <Typography tag="small" styling="sm">
-                  {icon.id}
-                </Typography>
-              </div>
-            </AutocompleteItem>
+        <Controller
+          control={control}
+          name="title"
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              {...field}
+              errorMessage={error?.message}
+              label="Title"
+              placeholder="Study"
+            />
           )}
-        </Autocomplete>
+        />
 
-        <Textarea
-          {...register("description")}
-          label="Description"
-          placeholder="Learning"
-          description="Short description needed for describe board"
-          errorMessage={errors.description?.message}
-          className={styles.description}
+        <Controller
+          control={control}
+          name="icon"
+          render={({ field, fieldState: { error } }) => (
+            <Autocomplete
+              {...field}
+              defaultItems={BOARD_ICONS_MAP}
+              defaultSelectedKey={defaultValues.icon}
+              errorMessage={error?.message}
+              label="Icon"
+              placeholder="Grid2X2"
+              classNames={{
+                listboxWrapper: styles.listboxWrapper,
+              }}
+              labelPlacement="outside"
+            >
+              {(icon) => (
+                <AutocompleteItem key={icon.value} textValue={icon.value}>
+                  <div className={styles.item}>
+                    <Icon name={icon.id} size={20} />
+                    <Typography tag="small" styling="sm">
+                      {icon.id}
+                    </Typography>
+                  </div>
+                </AutocompleteItem>
+              )}
+            </Autocomplete>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="description"
+          render={({ field, fieldState: { error } }) => (
+            <Textarea
+              {...field}
+              label="Description"
+              placeholder="Learning"
+              description="Short description needed for describe board"
+              errorMessage={error?.message}
+              className={styles.description}
+            />
+          )}
         />
       </div>
+
       <footer className={styles.footer}>
-        <Button onClick={onCancelClick}>Cancel</Button>
+        {onCancelClick && <Button onClick={onCancelClick}>Cancel</Button>}
         <Button type="submit" color="primary">
-          Create new board
+          {type === "create" ? "Create new board" : "Save changes"}
         </Button>
       </footer>
     </form>

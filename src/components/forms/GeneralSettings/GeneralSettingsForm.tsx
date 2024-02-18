@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { useState, type ComponentPropsWithoutRef, type FC } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { isDirty, z } from "zod";
 import styles from "./GeneralSettingsForm.module.scss";
 
 export type GeneralSettingsFormValues = {
@@ -31,12 +31,7 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
   const { initialValues, onFormSubmit, className, ...rest } = props;
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isDirty },
-    reset,
-  } = useForm<GeneralSettingsFormValues>({
+  const { control, handleSubmit, reset } = useForm<GeneralSettingsFormValues>({
     mode: "onChange",
     resolver: zodResolver(validationSchema),
     defaultValues: initialValues,
@@ -68,12 +63,12 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
         <Controller
           control={control}
           name="login"
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
               label="Login"
               placeholder="FunnyCat123"
-              errorMessage={errors.login?.message}
+              errorMessage={error?.message}
             />
           )}
         />
@@ -81,12 +76,12 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
         <Controller
           control={control}
           name="name"
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
               label="Name"
               placeholder="John Doe"
-              errorMessage={errors.name?.message}
+              errorMessage={error?.message}
             />
           )}
         />
