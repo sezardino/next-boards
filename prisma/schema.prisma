@@ -16,8 +16,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  login    String  @unique
-  name     String?
+  login    String @unique
+  name     String @default("")
   password String
 
   profile Profile?

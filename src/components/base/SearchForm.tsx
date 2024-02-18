@@ -8,7 +8,7 @@ import {
   type FC,
 } from "react";
 import { Icon } from "./Icon";
-import { Input } from "./Input";
+import { Input } from "./Input/Input";
 
 export interface SearchFormProps
   extends Omit<ComponentPropsWithoutRef<"form">, "onSubmit"> {

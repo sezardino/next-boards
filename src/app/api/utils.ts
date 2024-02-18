@@ -33,12 +33,14 @@ export const withValidation = <Schema extends ZodSchema>(
 ) => {
   const { schema, handler, authorization, input = "body" } = args;
 
-  return async (req: NextRequest, params: any) => {
+  return async (req: NextRequest) => {
     const session = await getNextAuthSession();
 
     if (authorization && !session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    if (!schema) return handler(req);
 
     try {
       let data;
@@ -47,14 +49,10 @@ export const withValidation = <Schema extends ZodSchema>(
       if (input === "search")
         data = formatUrlSearchParams(req.nextUrl.searchParams);
 
-      if (!data && !schema) return handler(req);
-
-      await schema?.parseAsync(data);
+      await schema.parseAsync(data);
 
       return handler(req);
     } catch (error) {
-      // console.log("Validation error", error);
-
       if (error instanceof ZodError) {
         return NextResponse.json(
           { message: "Invalid request", error },

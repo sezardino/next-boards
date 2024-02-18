@@ -2,7 +2,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 
 import { Button } from "@/components/base/Button";
 import { Icon } from "@/components/base/Icon";
-import { Input } from "@/components/base/Input";
+import { Input } from "@/components/base/Input/Input";
 import { Textarea } from "@/components/base/Textarea";
 import { Typography } from "@/components/base/Typography/Typography";
 import { BOARD_ICONS, BOARD_ICONS_MAP, BoardIcon } from "@/const/icons";

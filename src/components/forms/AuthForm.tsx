@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_LOGIN_LENGTH } from "@/const/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useEffect,
@@ -11,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../base/Button";
 import { Grid } from "../base/Grid/Grid";
-import { Input } from "../base/Input";
+import { Input } from "../base/Input/Input";
 
 export type AuthFormValues = {
   login: string;
@@ -40,7 +41,9 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     () =>
       z
         .object({
-          login: z.string(),
+          login: z
+            .string()
+            .max(MAX_LOGIN_LENGTH, `Max ${MAX_LOGIN_LENGTH} characters`),
           password: z.string().min(6),
           passwordConfirmation: isSignUp
             ? z.string().min(6)

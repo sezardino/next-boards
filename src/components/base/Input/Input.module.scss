@@ -1,0 +1,7 @@
+.button {
+  @apply text-default-400 focus:outline-none focus-within:text-primary-500;
+}
+
+.icon {
+  @apply pointer-events-none;
+}

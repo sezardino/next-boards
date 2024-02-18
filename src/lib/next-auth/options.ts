@@ -24,6 +24,7 @@ export const nextAuthOptions: AuthOptions = {
 
           return Promise.reject({ message: "not found" });
         } catch (error) {
+          console.log(error);
           return Promise.reject({
             message: (error as { error: string }).error,
           });
@@ -53,7 +54,8 @@ export const nextAuthOptions: AuthOptions = {
         user: {
           ...session.user,
           id: token.id,
-          email: token.email,
+          login: token.login,
+          name: token.name,
         },
       };
     },
@@ -63,7 +65,8 @@ export const nextAuthOptions: AuthOptions = {
         return {
           ...token,
           id: user.id,
-          email: user.email,
+          login: user.login,
+          name: user.name,
         };
       }
       return token;
