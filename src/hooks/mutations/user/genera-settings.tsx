@@ -11,5 +11,6 @@ export const useGeneralSettingsMutation = () =>
       message: "General settings updated",
       description: "Your general settings have been updated successfully",
     },
+    errorToast: "Failed to update general settings",
     getQueriesToInvalidate: () => [[ME_QUERY_KEY]],
   });

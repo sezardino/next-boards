@@ -43,11 +43,12 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
   });
 
   const submitHandler = handleSubmit(async (values) => {
-    console.log(values.login !== initialValues.login && !isConfirmModalOpen);
     if (values.login !== initialValues.login && !isConfirmModalOpen) {
       setIsConfirmModalOpen(true);
       return;
     }
+
+    setIsConfirmModalOpen(false);
 
     try {
       await onFormSubmit(values);
@@ -99,9 +100,9 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         heading={{
-          title: { tag: "h3", text: "Are you sure?" },
+          title: { tag: "h3", text: "Change Login" },
           description: {
-            text: "After changing login, you should use it when you try to sign-in to system",
+            text: "Are you sure you want to change your login? You will need to use the new login to sign in.",
           },
         }}
         confirm={{

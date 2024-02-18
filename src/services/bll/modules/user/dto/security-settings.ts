@@ -10,12 +10,12 @@ export type UserSecuritySettingsDto = z.infer<
 >;
 
 export enum UserSecuritySettingsError {
-  NotMatch = "NotMatch",
-  NotFound = "NotFound",
+  NotMatch = "Wrong password",
+  NotFound = "User not found",
 }
 
 export const userSecuritySettingsResponseSchema = z.object({
-  success: z.boolean(),
+  error: z.string().optional(),
 });
 
 export type UserSecuritySettingsResponse = z.infer<

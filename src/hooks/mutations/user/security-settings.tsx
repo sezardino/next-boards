@@ -10,4 +10,5 @@ export const useSecuritySettingsMutation = () =>
       message: "Security settings updated",
       description: "Your security settings have been updated successfully",
     },
+    errorToast: "Failed to update security settings",
   });

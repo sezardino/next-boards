@@ -1,3 +1,4 @@
+import { PrismaService } from "@/lib/prisma";
 import { hashService } from "@/services/hash";
 import { BllModule } from "../../utils";
 import { SignUpDto } from "../auth/dto";
@@ -10,6 +11,11 @@ import {
 } from "./dto";
 
 export class UserBllModule extends BllModule {
+  constructor(private readonly prisma: PrismaService) {
+    super(prisma);
+    this.getById = this.getById.bind(this);
+  }
+
   getByLogin(login: string) {
     return this.prismaService.user.findUnique({
       where: { login },
