@@ -107,7 +107,13 @@ export const BoardsScreen: FC<BoardsScreenProps> = (props) => {
             Create board
           </Button>
         </div>
-        <ul className={styles.list}>
+
+        <ul
+          className={clsx(
+            styles.list,
+            boards.data?.length === 0 && styles.empty
+          )}
+        >
           {boards.data?.length === 0 && !boards.isLoading && (
             <li className={styles.noData}>
               <Typography styling="three-xl" tag="span">
