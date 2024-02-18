@@ -11,7 +11,7 @@ import {
 import styles from "./AuthScreen.module.scss";
 
 import { Grid } from "@/components/base/Grid/Grid";
-import { AuthForm, AuthFormValues } from "@/components/forms/AuthForm";
+import { AuthForm, AuthFormValues } from "@/components/forms/Auth/AuthForm";
 import { Heading } from "@/components/ui/Heading/Heading";
 
 type Props = {

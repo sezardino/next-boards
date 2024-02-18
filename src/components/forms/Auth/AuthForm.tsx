@@ -10,9 +10,9 @@ import {
 } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../base/Button";
-import { Grid } from "../base/Grid/Grid";
-import { Input } from "../base/Input/Input";
+import { Button } from "../../base/Button";
+import { Grid } from "../../base/Grid/Grid";
+import { Input } from "../../base/Input/Input";
 
 export type AuthFormValues = {
   login: string;

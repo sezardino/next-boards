@@ -1,10 +1,11 @@
 import { Button } from "@/components/base/Button";
 import { Grid } from "@/components/base/Grid/Grid";
 import { Input } from "@/components/base/Input/Input";
+import { ModalConfirm } from "@/components/ui/ModalConfirm/ModalConfirm";
 import { MAX_LOGIN_LENGTH, MAX_NAME_LENGTH } from "@/const/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { type ComponentPropsWithoutRef, type FC } from "react";
+import { useState, type ComponentPropsWithoutRef, type FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import styles from "./GeneralSettingsForm.module.scss";
@@ -28,6 +29,7 @@ const validationSchema = z.object({
 
 export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
   const { initialValues, onFormSubmit, className, ...rest } = props;
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const {
     control,
@@ -41,6 +43,12 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
   });
 
   const submitHandler = handleSubmit(async (values) => {
+    console.log(values.login !== initialValues.login && !isConfirmModalOpen);
+    if (values.login !== initialValues.login && !isConfirmModalOpen) {
+      setIsConfirmModalOpen(true);
+      return;
+    }
+
     try {
       await onFormSubmit(values);
       reset();
@@ -48,42 +56,65 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
   });
 
   return (
-    <Grid
-      {...rest}
-      tag="form"
-      gap="4"
-      className={clsx(styles.element, className)}
-      onSubmit={submitHandler}
-    >
-      <Controller
-        control={control}
-        name="login"
-        render={({ field }) => (
-          <Input
-            {...field}
-            label="Login"
-            placeholder="FunnyCat123"
-            errorMessage={errors.login?.message}
-          />
-        )}
-      />
+    <>
+      <Grid
+        {...rest}
+        tag="form"
+        gap="4"
+        className={clsx(styles.element, className)}
+        onSubmit={submitHandler}
+      >
+        <Controller
+          control={control}
+          name="login"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Login"
+              placeholder="FunnyCat123"
+              errorMessage={errors.login?.message}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field }) => (
-          <Input
-            {...field}
-            label="Name"
-            placeholder="John Doe"
-            errorMessage={errors.name?.message}
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="name"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Name"
+              placeholder="John Doe"
+              errorMessage={errors.name?.message}
+            />
+          )}
+        />
 
-      <Button type="submit" disabled={!isDirty} className={styles.submit}>
-        Save changes
-      </Button>
-    </Grid>
+        <Button type="submit" disabled={!isDirty} className={styles.submit}>
+          Save changes
+        </Button>
+      </Grid>
+
+      <ModalConfirm
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        heading={{
+          title: { tag: "h3", text: "Are you sure?" },
+          description: {
+            text: "After changing login, you should use it when you try to sign-in to system",
+          },
+        }}
+        confirm={{
+          children: "Change data",
+          onClick: submitHandler,
+          color: "primary",
+        }}
+        cancel={{
+          children: "Cancel",
+          variant: "bordered",
+          onClick: () => setIsConfirmModalOpen(false),
+        }}
+      />
+    </>
   );
 };

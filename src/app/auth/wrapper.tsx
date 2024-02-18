@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthFormValues } from "@/components/forms/AuthForm";
+import { AuthFormValues } from "@/components/forms/Auth/AuthForm";
 import { AuthScreen } from "@/components/screens/Auth/AuthScreen";
 import { PageUrls } from "@/const/url";
 import { useSignUpMutation } from "@/hooks/mutations/auth/sign-up";
