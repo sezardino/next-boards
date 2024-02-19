@@ -43,10 +43,9 @@ export const GeneralSettingsForm: FC<GeneralSettingsFormProps> = (props) => {
       return;
     }
 
-    setIsConfirmModalOpen(false);
-
     try {
       await onFormSubmit(values);
+      setIsConfirmModalOpen(false);
       reset();
     } catch (error) {}
   });

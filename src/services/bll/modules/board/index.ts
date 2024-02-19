@@ -9,6 +9,7 @@ import {
   AllBoardsDto,
   ArchiveBoardDto,
   ArchiveBoardError,
+  BoardBaseDataError,
   BoardByIdDto,
   BoardByIdError,
   ChangeTaskColumnDto,
@@ -17,6 +18,7 @@ import {
   CreateBoardDto,
   TasksOrderDto,
 } from "./dto";
+import { PatchBoardBaseDataDto } from "./dto/update-base-board-data";
 
 export class BoardBllModule extends BllModule {
   getAll(dto: AllBoardsDto = {}, userId: string) {
@@ -223,5 +225,47 @@ export class BoardBllModule extends BllModule {
         })
       )
     );
+  }
+
+  async baseBoardData(id: string, userId: string) {
+    const board = await this.prismaService.board.findUnique({
+      where: { id, userId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        icon: true,
+      },
+    });
+
+    if (!board) this.throw(BoardBaseDataError.NotFound);
+
+    return board;
+  }
+
+  async updateBaseBoardData(dto: PatchBoardBaseDataDto, userId: string) {
+    const board = await this.prismaService.board.findUnique({
+      where: { id: dto.id, userId },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!board) this.throw(BoardBaseDataError.NotFound);
+
+    return this.prismaService.board.update({
+      where: { id: board.id },
+      data: {
+        title: dto.title,
+        description: dto.description,
+        icon: dto.icon,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        icon: true,
+      },
+    });
   }
 }

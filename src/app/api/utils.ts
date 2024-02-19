@@ -33,14 +33,14 @@ export const withValidation = <Schema extends ZodSchema>(
 ) => {
   const { schema, handler, authorization, input = "body" } = args;
 
-  return async (req: NextRequest) => {
+  return async (req: NextRequest, params: any) => {
     const session = await getNextAuthSession();
 
     if (authorization && !session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    if (!schema) return handler(req);
+    if (!schema) return handler(req, params);
 
     try {
       let data;

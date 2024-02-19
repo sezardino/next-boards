@@ -157,6 +157,7 @@ export const BoardsScreen: FC<BoardsScreenProps> = (props) => {
       >
         <BoardForm
           onFormSubmit={createBoardHandler}
+          isLoading={createBoardAction.isPending}
           onCancelClick={() => setIsCreateBoardModalOpen(false)}
         />
       </ModalWithDescription>

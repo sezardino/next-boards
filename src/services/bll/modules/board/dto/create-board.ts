@@ -1,10 +1,13 @@
-import { BOARD_ICONS } from "@/const/icons";
+import { BOARD_ICONS, BoardIcon } from "@/const/icons";
 import { z } from "zod";
 
 export const createBoardDtoSchema = z.object({
   title: z.string().max(50),
   description: z.string().max(100),
-  icon: z.enum(BOARD_ICONS, { invalid_type_error: "Wrong icon" }),
+  icon: z.string().refine((icon) => BOARD_ICONS.includes(icon as BoardIcon), {
+    message: "Invalid icon",
+    path: ["icon"],
+  }),
 });
 
 export type CreateBoardDto = z.infer<typeof createBoardDtoSchema>;

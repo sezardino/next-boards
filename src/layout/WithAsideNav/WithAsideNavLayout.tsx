@@ -20,7 +20,7 @@ export const WithAsideNavLayout: FC<WithAsideNavLayoutProps> = (props) => {
   return (
     <div {...rest} className={clsx(styles.element, className)}>
       <nav className={styles.nav}>
-        <NavigationList links={links} />
+        <NavigationList size="sm" links={links} />
       </nav>
       <div className={styles.main}>{children}</div>
     </div>

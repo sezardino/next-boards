@@ -2,6 +2,7 @@ export * from "./add-column";
 export * from "./add-task";
 export * from "./all-boards";
 export * from "./archive-board";
+export * from "./base-board-data";
 export * from "./by-id";
 export * from "./columns-order";
 export * from "./create-board";

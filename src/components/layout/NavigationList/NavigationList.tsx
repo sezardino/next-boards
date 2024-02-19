@@ -13,21 +13,26 @@ export type NavigationListLink = {
 
 type Props = {
   links: NavigationListLink[];
+  size?: "sm" | "md";
 };
 
 export type NavigationListProps = ComponentPropsWithoutRef<"ul"> & Props;
 
 export const NavigationList: FC<NavigationListProps> = (props) => {
-  const { links, ...rest } = props;
+  const { size = "md", links, ...rest } = props;
 
   return (
     <ul {...rest}>
       {links.map((link) => (
         <li key={link.href} className={styles.item}>
           <Link href={link.href} className={styles.link}>
-            <Icon name={link.icon} aria-hidden="true" />
+            <Icon
+              name={link.icon}
+              aria-hidden="true"
+              size={size === "md" ? 16 : 14}
+            />
 
-            <Typography tag="span" styling="sm">
+            <Typography tag="span" styling={size === "md" ? "sm" : "xs"}>
               {link.label}
             </Typography>
           </Link>
