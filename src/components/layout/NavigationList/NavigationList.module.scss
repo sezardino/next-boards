@@ -1,3 +1,9 @@
+.element {
+  &.horizontal {
+    @apply flex items-center gap-2;
+  }
+}
+
 .item {
   @apply flex items-center p-2 text-base font-normal rounded-lg transition duration-75 hover:bg-gray-700 text-white;
 }

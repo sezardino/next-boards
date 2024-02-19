@@ -2,6 +2,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 
 import { Icon, IconNames } from "@/components/base/Icon";
 import { Typography } from "@/components/base/Typography/Typography";
+import clsx from "clsx";
 import Link from "next/link";
 import styles from "./NavigationList.module.scss";
 
@@ -14,15 +15,29 @@ export type NavigationListLink = {
 type Props = {
   links: NavigationListLink[];
   size?: "sm" | "md";
+  orientation?: "vertical" | "horizontal";
 };
 
 export type NavigationListProps = ComponentPropsWithoutRef<"ul"> & Props;
 
 export const NavigationList: FC<NavigationListProps> = (props) => {
-  const { size = "md", links, ...rest } = props;
+  const {
+    orientation = "vertical",
+    size = "md",
+    links,
+    className,
+    ...rest
+  } = props;
 
   return (
-    <ul {...rest}>
+    <ul
+      {...rest}
+      className={clsx(
+        styles.element,
+        orientation === "horizontal" && styles.horizontal,
+        className
+      )}
+    >
       {links.map((link) => (
         <li key={link.href} className={styles.item}>
           <Link href={link.href} className={styles.link}>
