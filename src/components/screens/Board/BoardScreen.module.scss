@@ -1,0 +1,11 @@
+.element {
+  @apply h-full;
+}
+
+.columns {
+  @apply flex gap-4 overflow-y-auto h-full;
+}
+
+.column {
+  @apply flex-1 min-w-60;
+}
