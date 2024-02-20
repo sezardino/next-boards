@@ -1,14 +1,16 @@
 import {
-  FocusEvent,
   KeyboardEvent,
-  useState,
+  MouseEvent,
+  useRef,
   type ComponentPropsWithoutRef,
   type FC,
 } from "react";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@nextui-org/react";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "../Button";
 import { Icon } from "../Icon";
 import styles from "./InputForm.module.scss";
@@ -29,6 +31,10 @@ type Props = {
 
 export type InputFormProps = ComponentPropsWithoutRef<"form"> & Props;
 
+const validationSchema = z.object({
+  value: z.string().min(1),
+});
+
 export const InputForm: FC<InputFormProps> = (props) => {
   const {
     submit,
@@ -41,7 +47,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
     className,
     ...rest
   } = props;
-  const [isFooterVisible, setIsFooterVisible] = useState(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const {
     register,
@@ -49,6 +55,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<InputFormValues>({
+    resolver: zodResolver(validationSchema),
     defaultValues: {
       value: initialValue || "",
     },
@@ -56,29 +63,22 @@ export const InputForm: FC<InputFormProps> = (props) => {
 
   const submitHandler = handleSubmit(async (values) => {
     await onFormSubmit(values.value);
-    setIsFooterVisible(false);
     reset();
   });
-
-  const blurHandler = (evt: FocusEvent<HTMLInputElement>) => {
-    register("value").onBlur(evt);
-
-    if (evt.currentTarget.value === initialValue) setIsFooterVisible(false);
-  };
-
-  const focusHandler = (evt: FocusEvent<HTMLInputElement>) =>
-    setIsFooterVisible(true);
 
   const keyDownHandler = (evt: KeyboardEvent<HTMLInputElement>) => {
     if (evt.key === "Enter") {
       submitHandler();
-      evt.currentTarget.blur();
     }
 
     if (evt.key === "Escape") {
       reset();
-      evt.currentTarget.blur();
     }
+  };
+
+  const resetButtonHandler = (evt: MouseEvent<HTMLButtonElement>) => {
+    reset();
+    evt.currentTarget.blur();
   };
 
   const isDisabled = isPending || isSubmitting;
@@ -86,7 +86,8 @@ export const InputForm: FC<InputFormProps> = (props) => {
   return (
     <form
       {...rest}
-      className={cn(styles.element, className)}
+      ref={formRef}
+      className={cn(styles.element, "group", className)}
       onSubmit={submitHandler}
       aria-label={label}
     >
@@ -96,14 +97,10 @@ export const InputForm: FC<InputFormProps> = (props) => {
         name="value"
         placeholder={placeholder}
         disabled={isDisabled}
-        className={styles.input}
-        onBlur={blurHandler}
-        onFocus={focusHandler}
+        className={clsx(styles.input, "")}
         onKeyDown={keyDownHandler}
       />
-      <footer
-        className={clsx(styles.footer, isFooterVisible && styles.visible)}
-      >
+      <footer className={clsx(styles.footer, "group-focus-within:flex")}>
         <Button
           type="submit"
           disabled={isDisabled}
@@ -114,10 +111,10 @@ export const InputForm: FC<InputFormProps> = (props) => {
           <Icon name="Check" size={16} />
         </Button>
         <Button
-          type="reset"
           disabled={isDisabled}
           isIconOnly
           size="sm"
+          onClick={resetButtonHandler}
           aria-label={cancel}
         >
           <Icon name="X" size={16} />

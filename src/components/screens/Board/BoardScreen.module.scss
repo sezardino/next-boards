@@ -7,5 +7,9 @@
 }
 
 .column {
-  @apply flex-1 min-w-60;
+  @apply flex-1 min-w-60 max-w-60;
+}
+
+.tasks {
+  @apply mt-4 grid grid-cols-1 gap-4;
 }

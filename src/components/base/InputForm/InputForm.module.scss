@@ -3,11 +3,11 @@
 }
 
 .input {
-  @apply py-1 w-full bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-500 focus:outline-none;
+  @apply py-1 w-full bg-transparent border-0 border-b-2 border-transparent focus:border-gray-500 focus:outline-none;
 }
 
 .footer {
-  @apply absolute -bottom-1 right-0 translate-y-full gap-1 items-center hidden;
+  @apply absolute -bottom-1 right-0 translate-y-full gap-1 items-center hidden z-10;
 
   &.visible {
     @apply flex;

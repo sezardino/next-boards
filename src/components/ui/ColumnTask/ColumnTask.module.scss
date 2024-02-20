@@ -1,0 +1,7 @@
+.element {
+  @apply overflow-visible;
+}
+
+.header {
+  @apply grid grid-cols-[1fr,auto] gap-1;
+}
