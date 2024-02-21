@@ -1,9 +1,9 @@
 import { userGeneralSettingsDtoSchema } from "@/services/bll/modules/user/dto";
 import { withValidation } from "../../../utils";
-import { generalSettingsHandler } from "./general-settings";
+import { patchGeneralSettingsHandler } from "./patch";
 
 export const PATCH = withValidation({
   schema: userGeneralSettingsDtoSchema,
-  handler: generalSettingsHandler,
+  handler: patchGeneralSettingsHandler,
   authorization: true,
 });

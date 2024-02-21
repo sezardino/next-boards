@@ -1,26 +1,9 @@
-import { bllService } from "@/services/bll";
-import { SignUpDto, signUpDtoSchema } from "@/services/bll/modules/auth/dto";
-import { isBllModuleError } from "@/services/bll/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { signUpDtoSchema } from "@/services/bll/modules/auth";
 import { withValidation } from "../../utils";
+import { postSignUpHandler } from "./post";
 
-const handler = async (req: NextRequest) => {
-  try {
-    const body = (await req.json()) as SignUpDto;
-
-    await bllService.auth.signUp(body);
-
-    return NextResponse.json({}, { status: 201 });
-  } catch (error) {
-    if (isBllModuleError(error)) {
-      return NextResponse.json({ error: error.error }, { status: 400 });
-    }
-    console.log(error);
-    return NextResponse.json(
-      { message: "Sign up failed", error },
-      { status: 500 }
-    );
-  }
-};
-
-export const POST = withValidation({ schema: signUpDtoSchema, handler });
+export const POST = withValidation({
+  schema: signUpDtoSchema,
+  handler: postSignUpHandler,
+  authorization: false,
+});

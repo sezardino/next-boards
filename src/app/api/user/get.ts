@@ -4,7 +4,7 @@ import { MeResponse } from "@/services/bll/modules/user/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextResponse } from "next/server";
 
-export const meHandler = async () => {
+export const getMeHandler = async () => {
   try {
     const session = await getNextAuthSession();
 

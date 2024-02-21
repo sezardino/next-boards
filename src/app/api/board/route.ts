@@ -3,18 +3,18 @@ import {
   createBoardDtoSchema,
 } from "@/services/bll/modules/board/dto";
 import { withValidation } from "../utils";
-import { allBoardsHandler } from "./all-baords";
-import { createBoardHandler } from "./create";
+import { getAllBoardsHandler } from "./get";
+import { postCreateBoardHandler } from "./post";
 
 export const POST = withValidation({
   schema: createBoardDtoSchema,
-  handler: createBoardHandler,
+  handler: postCreateBoardHandler,
   authorization: true,
 });
 
 export const GET = withValidation({
   schema: allBoardsDtoSchema,
-  handler: allBoardsHandler,
+  handler: getAllBoardsHandler,
   authorization: true,
   input: "search",
 });

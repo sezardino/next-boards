@@ -1,25 +1,25 @@
 import { getNextAuthSession } from "@/lib/next-auth";
 import { bllService } from "@/services/bll";
-import { UserSecuritySettingsDto } from "@/services/bll/modules/user/dto";
+import { AllBoardsResponse } from "@/services/bll/modules/board/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
+import { formatUrlSearchParams } from "../utils";
 
-export const securitySettingsHandler = async (req: NextRequest) => {
+export const getAllBoardsHandler = async (req: NextRequest) => {
   try {
     const session = await getNextAuthSession();
+    const params = formatUrlSearchParams(req.nextUrl.searchParams);
 
-    const body = (await req.json()) as UserSecuritySettingsDto;
+    const boards = await bllService.board.getAll(params, session?.user.id!);
 
-    await bllService.user.securitySettings(body, session?.user.id!);
-
-    return NextResponse.json({}, { status: 200 });
+    return NextResponse.json({ boards } as AllBoardsResponse, { status: 200 });
   } catch (error) {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });
     }
     console.log(error);
     return NextResponse.json(
-      { message: "Can't update general settings", error },
+      { message: "Something went wrong", error },
       { status: 500 }
     );
   }

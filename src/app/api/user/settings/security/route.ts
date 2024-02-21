@@ -1,9 +1,9 @@
 import { userSecuritySettingsDtoSchema } from "@/services/bll/modules/user/dto";
 import { withValidation } from "../../../utils";
-import { securitySettingsHandler } from "./security-settings";
+import { patchSecuritySettingsHandler } from "./patch";
 
 export const PATCH = withValidation({
   schema: userSecuritySettingsDtoSchema,
-  handler: securitySettingsHandler,
+  handler: patchSecuritySettingsHandler,
   authorization: true,
 });

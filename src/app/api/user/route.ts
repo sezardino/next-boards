@@ -1,7 +1,7 @@
 import { withValidation } from "../utils";
-import { meHandler } from "./me";
+import { getMeHandler } from "./get";
 
 export const GET = withValidation({
-  handler: meHandler,
+  handler: getMeHandler,
   authorization: true,
 });
