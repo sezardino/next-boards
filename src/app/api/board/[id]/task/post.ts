@@ -1,6 +1,6 @@
 import { getNextAuthSession } from "@/lib/next-auth";
 import { bllService } from "@/services/bll";
-import { AddTaskResponse } from "@/services/bll/modules/board/dto";
+import { AddTaskResponse } from "@/services/bll/modules/task/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ export const postBoardTaskHandler = async (req: NextRequest) => {
     const dto = await req.json();
 
     const session = await getNextAuthSession();
-    const response = await bllService.board.addTask(dto, session?.user.id!);
+    const response = await bllService.task.add(dto, session?.user.id!);
 
     return NextResponse.json(response as AddTaskResponse, { status: 201 });
   } catch (error) {

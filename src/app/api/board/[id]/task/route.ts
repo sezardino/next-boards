@@ -1,6 +1,6 @@
 import { withValidation } from "@/app/api/utils";
-import { addTaskDtoSchema } from "@/services/bll/modules/board/dto";
 import { postBoardTaskHandler } from "./post";
+import { addTaskDtoSchema } from "@/services/bll/modules/task/dto";
 
 export const POST = withValidation({
   schema: addTaskDtoSchema,

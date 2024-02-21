@@ -1,5 +1,5 @@
 import { withValidation } from "@/app/api/utils";
-import { patchBaseBoardDataDtoSchema } from "@/services/bll/modules/board/dto/update-base-board-data";
+import { patchBaseBoardDataDtoSchema } from "@/services/bll/modules/board/dto/update-base-data";
 import { getBaseDataHandler } from "./get";
 import { patchBaseDataHandler } from "./patch";
 

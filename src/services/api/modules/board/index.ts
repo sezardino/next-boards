@@ -1,9 +1,6 @@
 import {
-  AddColumnDto,
   AllBoardsDto,
   CreateBoardDto,
-  addColumnResponseSchema,
-  addTaskDtoSchema,
   allBoardsResponseSchema,
   boardBaseDataResponseSchema,
   boardResponseSchema,
@@ -12,7 +9,12 @@ import {
 import {
   PatchBoardBaseDataDto,
   patchBaseBoardDataResponseSchema,
-} from "@/services/bll/modules/board/dto/update-base-board-data";
+} from "@/services/bll/modules/board/dto/update-base-data";
+import {
+  AddColumnDto,
+  addColumnResponseSchema,
+} from "@/services/bll/modules/column/dto";
+import { addTaskDtoSchema } from "@/services/bll/modules/task/dto";
 import { AbstractApiModule } from "../../helpers";
 
 export class BoardApiModule extends AbstractApiModule {

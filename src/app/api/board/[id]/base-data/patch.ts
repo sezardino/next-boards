@@ -1,6 +1,6 @@
 import { getNextAuthSession } from "@/lib/next-auth";
 import { bllService } from "@/services/bll";
-import { PatchBoardBaseDataResponse } from "@/services/bll/modules/board/dto/update-base-board-data";
+import { PatchBoardBaseDataResponse } from "@/services/bll/modules/board/dto/update-base-data";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 

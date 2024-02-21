@@ -21,12 +21,9 @@ import { BoardColumn } from "@/components/modules/board/BoardColumn/BoardColumn"
 import { Sortable } from "@/components/modules/dnd/Sortable";
 import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import { Heading } from "@/components/ui/Heading/Heading";
-import {
-  AddColumnResponse,
-  AddTaskDto,
-  AddTaskResponse,
-  Board,
-} from "@/services/bll/modules/board/dto";
+import { Board } from "@/services/bll/modules/board/dto";
+import { AddColumnResponse } from "@/services/bll/modules/column/dto";
+import { AddTaskDto, AddTaskResponse } from "@/services/bll/modules/task/dto";
 import { ActionProp, DataProp } from "@/types";
 import {
   SortableContext,

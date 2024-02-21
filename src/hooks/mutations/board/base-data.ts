@@ -1,7 +1,7 @@
 import { BOARD_BASE_DATA_QUERY_KEY } from "@/hooks/queries/boards/base-data";
 import { useMutationHelper } from "@/lib/react-query";
 import { apiService } from "@/services/api";
-import { PatchBoardBaseDataDto } from "@/services/bll/modules/board/dto/update-base-board-data";
+import { PatchBoardBaseDataDto } from "@/services/bll/modules/board/dto/update-base-data";
 
 export const useBoardBaseDataMutation = () =>
   useMutationHelper({
