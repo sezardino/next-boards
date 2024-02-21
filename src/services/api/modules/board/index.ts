@@ -10,11 +10,6 @@ import {
   PatchBoardBaseDataDto,
   patchBaseBoardDataResponseSchema,
 } from "@/services/bll/modules/board/dto/update-base-data";
-import {
-  AddColumnDto,
-  addColumnResponseSchema,
-} from "@/services/bll/modules/column/dto";
-import { addTaskDtoSchema } from "@/services/bll/modules/task/dto";
 import { AbstractApiModule } from "../../helpers";
 
 export class BoardApiModule extends AbstractApiModule {
@@ -55,22 +50,6 @@ export class BoardApiModule extends AbstractApiModule {
       endpoint: `board/${data.id}/base-data`,
       schema: patchBaseBoardDataResponseSchema,
       config: { method: "PATCH", data },
-    });
-  }
-
-  addColumn(data: AddColumnDto) {
-    return this.fetch({
-      endpoint: `board/${data.boardId}/column`,
-      schema: addColumnResponseSchema,
-      config: { method: "POST", data },
-    });
-  }
-
-  addTask(data: AddColumnDto) {
-    return this.fetch({
-      endpoint: `board/${data.boardId}/task`,
-      schema: addTaskDtoSchema,
-      config: { method: "POST", data },
     });
   }
 }

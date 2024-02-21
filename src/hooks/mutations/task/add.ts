@@ -5,6 +5,6 @@ import { AddTaskDto } from "@/services/bll/modules/task/dto";
 
 export const useAddTaskMutation = () =>
   useMutationHelper({
-    mutationFn: (values: AddTaskDto) => apiService.board.addTask(values),
+    mutationFn: (values: AddTaskDto) => apiService.task.add(values),
     getQueriesToInvalidate: ({ vars }) => [[BOARD_QUERY_KEY, vars.boardId]],
   });

@@ -1,8 +1,8 @@
 "use client";
 
 import { BoardScreen } from "@/components/screens/Board/BoardScreen";
-import { useAddColumnMutation } from "@/hooks/mutations/board/add-column";
-import { useAddTaskMutation } from "@/hooks/mutations/board/add-task";
+import { useAddColumnMutation } from "@/hooks/mutations/column/add";
+import { useAddTaskMutation } from "@/hooks/mutations/task/add";
 import { useBoardQuery } from "@/hooks/queries/boards/board";
 import { AddTaskDto } from "@/services/bll/modules/task/dto";
 import { useCallback } from "react";

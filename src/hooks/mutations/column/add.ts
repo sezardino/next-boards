@@ -5,6 +5,6 @@ import { AddColumnDto } from "@/services/bll/modules/column/dto";
 
 export const useAddColumnMutation = () =>
   useMutationHelper({
-    mutationFn: (values: AddColumnDto) => apiService.board.addColumn(values),
+    mutationFn: (values: AddColumnDto) => apiService.column.add(values),
     getQueriesToInvalidate: ({ vars }) => [[BOARD_QUERY_KEY, vars.boardId]],
   });
