@@ -15,8 +15,10 @@ export enum AddTaskError {
   WrongData = "WrongData",
 }
 
-export const addTaskResponseSchema = z.object({
-  error: z.nativeEnum(AddTaskError),
-});
+export const addTaskResponseSchema = z.object({}).or(
+  z.object({
+    error: z.nativeEnum(AddTaskError),
+  })
+);
 
 export type AddTaskResponse = z.infer<typeof addTaskResponseSchema>;

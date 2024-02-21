@@ -10,14 +10,14 @@ import {
   ArchiveBoardDto,
   ArchiveBoardError,
   BoardBaseDataError,
-  BoardByIdDto,
-  BoardByIdError,
+  BoardError,
   ChangeTaskColumnDto,
   ChangeTaskColumnError,
   ColumnsOrderDto,
   CreateBoardDto,
   TasksOrderDto,
 } from "./dto";
+import { DeleteBoardError } from "./dto/delete-board";
 import { PatchBoardBaseDataDto } from "./dto/update-base-board-data";
 
 export class BoardBllModule extends BllModule {
@@ -42,13 +42,13 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async getById(dto: BoardByIdDto, userId: string) {
+  async board(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
+      where: { id: id, userId, status: EntityStatus.ACTIVE },
       include: { columns: { include: { tasks: true } } },
     });
 
-    if (!neededBoard) this.throw(BoardByIdError.NotFound);
+    if (!neededBoard) this.throw(BoardError.NotFound);
 
     return neededBoard;
   }
@@ -86,23 +86,23 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async deleteBoard(dto: BoardByIdDto, userId: string) {
+  async deleteBoard(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
+      where: { id, userId, status: EntityStatus.ACTIVE },
       select: { id: true },
     });
 
-    if (!neededBoard) this.throw(BoardByIdError.NotFound);
+    if (!neededBoard) this.throw(DeleteBoardError.NotFound);
 
     return this.prismaService.board.update({
-      where: { id: dto.id },
-      data: { status: EntityStatus.INACTIVE },
+      where: { id },
+      data: { status: EntityStatus.DELETED },
     });
   }
 
-  async addColumn(dto: AddColumnDto) {
+  async addColumn(dto: AddColumnDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id: dto.boardId },
+      where: { id: dto.boardId, userId },
       select: { _count: { select: { columns: true } } },
     });
 

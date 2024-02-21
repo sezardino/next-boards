@@ -1,19 +1,22 @@
 import { z } from "zod";
 
-export const boardByIdDtoSchema = z.object({
+export const boardDtoSchema = z.object({
   id: z.string(),
 });
 
-export type BoardByIdDto = z.infer<typeof boardByIdDtoSchema>;
+export type BoardDto = z.infer<typeof boardDtoSchema>;
 
-export enum BoardByIdError {
+export enum BoardError {
   NotFound = "NotFound",
 }
 
-export const boardByIdResponseSchema = z.object({
-  error: z.nativeEnum(BoardByIdError),
-  board: z.object({
-    id: z.string(),
-    title: z.string(),
-  }),
-});
+export const boardResponseSchema = z
+  .object({
+    board: z.object({
+      id: z.string(),
+      title: z.string(),
+    }),
+  })
+  .or(z.object({ error: z.nativeEnum(BoardError) }));
+
+export type BoardResponse = z.infer<typeof boardResponseSchema>;

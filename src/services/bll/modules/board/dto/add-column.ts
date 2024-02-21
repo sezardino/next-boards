@@ -11,4 +11,8 @@ export enum AddColumnError {
   BoardNotFound = "BoardNotFound",
 }
 
-export const addColumnResponseSchema = z.object({});
+export const addColumnResponseSchema = z
+  .object({})
+  .or(z.object({ error: z.nativeEnum(AddColumnError) }));
+
+export type AddColumnResponse = z.infer<typeof addColumnResponseSchema>;

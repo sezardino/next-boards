@@ -3,7 +3,7 @@
 import { BoardFormValues } from "@/components/forms/Board/BoardForm";
 import { BoardSettingsScreen } from "@/components/screens/BoardSettings/BoardSettingsScreen";
 import { useBoardBaseDataMutation } from "@/hooks/mutations/board/base-data";
-import { useBoardBaseDataQuery } from "@/hooks/queries/board/base-data";
+import { useBoardBaseDataQuery } from "@/hooks/queries/boards/base-data";
 import { useCallback } from "react";
 
 export const BoardSettingsPageWrapper = ({

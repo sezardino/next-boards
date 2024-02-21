@@ -25,6 +25,14 @@ import { ColumnHead } from "@/components/ui/ColumnHead/ColumnHead";
 import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import { Heading } from "@/components/ui/Heading/Heading";
 import {
+  AddColumnDto,
+  AddColumnResponse,
+  AddTaskDto,
+  AddTaskResponse,
+  BoardResponse,
+} from "@/services/bll/modules/board/dto";
+import { ActionProp, DataProp } from "@/types";
+import {
   SortableContext,
   arrayMove,
   horizontalListSortingStrategy,
@@ -35,6 +43,9 @@ import styles from "./BoardScreen.module.scss";
 export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
   // temp
   boardId: string;
+  board: DataProp<BoardResponse>;
+  addColumnAction: ActionProp<AddColumnDto, AddColumnResponse>;
+  addTaskAction: ActionProp<AddTaskDto, AddTaskResponse>;
 };
 
 type TempColumn = {
@@ -45,7 +56,7 @@ type TempColumn = {
 type TempTask = { title: string; id: string; columnId: string };
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
-  const { boardId, className, ...rest } = props;
+  const { boardId, addColumnAction, addTaskAction, className, ...rest } = props;
   const [columns, setColumns] = useState<TempColumn[]>([]); // temp
   const [tasks, setTasks] = useState<TempTask[]>([]); // temp
   const [draggableColumn, setDraggableColumn] = useState<TempColumn | null>(

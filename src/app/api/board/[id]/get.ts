@@ -1,22 +1,21 @@
 import { getNextAuthSession } from "@/lib/next-auth";
 import { bllService } from "@/services/bll";
-import { PatchBoardBaseDataResponse } from "@/services/bll/modules/board/dto/update-base-board-data";
+import { BoardResponse } from "@/services/bll/modules/board/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export const patchBaseDataHandler = async (req: NextRequest) => {
-  try {
-    const dto = await req.json();
+type Params = { params: { id: string } };
 
+export const getBoardHandler = async (_: NextRequest, params: Params) => {
+  try {
     const session = await getNextAuthSession();
-    const response = await bllService.board.updateBaseBoardData(
-      dto,
+
+    const board = await bllService.board.board(
+      params.params.id!,
       session?.user.id!
     );
 
-    return NextResponse.json(response as PatchBoardBaseDataResponse, {
-      status: 200,
-    });
+    return NextResponse.json({ board } as BoardResponse, { status: 200 });
   } catch (error) {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });
