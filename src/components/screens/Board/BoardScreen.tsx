@@ -31,6 +31,7 @@ import { AddTaskDto, AddTaskResponse } from "@/services/bll/modules/task/dto";
 import { ActionProp, DataProp } from "@/types";
 import {
   SortableContext,
+  arrayMove,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import clsx from "clsx";
@@ -119,17 +120,24 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
         (column) => column.id === active.id
       );
 
-      // if (isColumn) {
-      //   setColumns((prevColumns) => {
-      //     const oldIndex = prevColumns.findIndex(
-      //       (column) => column.id === active.id
-      //     );
-      //     const newIndex = prevColumns.findIndex(
-      //       (column) => column.id === over.id
-      //     );
-      //     return arrayMove(prevColumns, oldIndex, newIndex);
-      //   });
-      // } else {
+      if (isColumn) {
+        const oldIndex = board.data.columns.findIndex(
+          (column) => column.id === active.id
+        );
+        const newIndex = board.data.columns.findIndex(
+          (column) => column.id === over.id
+        );
+
+        const newOrder = arrayMove(board.data.columns, oldIndex, newIndex).map(
+          (c) => c.id
+        );
+
+        updateColumnAction.action({
+          columnId: active.id.toString(),
+          order: newOrder,
+        });
+      }
+      // else {
       //   const task = tasks.find((task) => task.id === active.id);
       //   if (!task) return;
 
