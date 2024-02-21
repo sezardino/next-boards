@@ -1,5 +1,5 @@
 .element {
-  @apply h-full;
+  @apply h-full grid grid-cols-1 grid-rows-[auto,1fr] gap-5;
 }
 
 .columns {

@@ -5,17 +5,20 @@ import { InputForm } from "@/components/base/InputForm/InputForm";
 import { Card, CardHeader, CardProps } from "@nextui-org/react";
 import clsx from "clsx";
 import styles from "./ColumnTask.module.scss";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 type Props = {
   title: string;
   onUpdateTitle: (title: string) => Promise<any>;
   isPending: boolean;
+  dndListeners?: SyntheticListenerMap;
 };
 
 export type ColumnTaskProps = CardProps & Props;
 
 export const ColumnTask: FC<ColumnTaskProps> = (props) => {
-  const { title, onUpdateTitle, isPending, className, ...rest } = props;
+  const { dndListeners, title, onUpdateTitle, isPending, className, ...rest } =
+    props;
 
   return (
     <Card {...rest} className={clsx(styles.element, className)}>
@@ -29,9 +32,11 @@ export const ColumnTask: FC<ColumnTaskProps> = (props) => {
           isPending={isPending}
           onFormSubmit={onUpdateTitle}
         />
-        <button type="button">
-          <Icon name="GripVertical" />
-        </button>
+        {dndListeners && (
+          <button type="button" {...dndListeners}>
+            <Icon name="GripVertical" />
+          </button>
+        )}
       </CardHeader>
     </Card>
   );

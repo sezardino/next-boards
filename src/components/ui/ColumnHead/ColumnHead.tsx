@@ -2,6 +2,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 
 import { Icon } from "@/components/base/Icon";
 import { InputForm } from "@/components/base/InputForm/InputForm";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import clsx from "clsx";
 import styles from "./ColumnHead.module.scss";
 
@@ -9,12 +10,14 @@ type Props = {
   title: string;
   onUpdateTitle: (title: string) => Promise<any>;
   isPending: boolean;
+  dndListeners?: SyntheticListenerMap;
 };
 
 export type ColumnHeadProps = ComponentPropsWithoutRef<"div"> & Props;
 
 export const ColumnHead: FC<ColumnHeadProps> = (props) => {
-  const { title, onUpdateTitle, isPending, className, ...rest } = props;
+  const { title, onUpdateTitle, isPending, dndListeners, className, ...rest } =
+    props;
 
   return (
     <div {...rest} className={clsx(styles.element, className)}>
@@ -27,9 +30,11 @@ export const ColumnHead: FC<ColumnHeadProps> = (props) => {
         isPending={isPending}
         onFormSubmit={onUpdateTitle}
       />
-      <button type="button">
-        <Icon name="GripVertical" />
-      </button>
+      {dndListeners && (
+        <button type="button" {...dndListeners}>
+          <Icon name="GripVertical" />
+        </button>
+      )}
     </div>
   );
 };
