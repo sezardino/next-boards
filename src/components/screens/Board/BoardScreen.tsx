@@ -15,26 +15,21 @@ import {
   DragStartEvent,
   closestCenter,
 } from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 
 import { InputForm } from "@/components/base/InputForm/InputForm";
-import { Draggable } from "@/components/modules/dnd/Draggable";
-import { Droppable } from "@/components/modules/dnd/Dropable";
+import { BoardColumn } from "@/components/modules/board/BoardColumn/BoardColumn";
 import { Sortable } from "@/components/modules/dnd/Sortable";
-import { ColumnHead } from "@/components/ui/ColumnHead/ColumnHead";
 import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import { Heading } from "@/components/ui/Heading/Heading";
 import {
-  AddColumnDto,
   AddColumnResponse,
   AddTaskDto,
   AddTaskResponse,
-  BoardResponse,
+  Board,
 } from "@/services/bll/modules/board/dto";
 import { ActionProp, DataProp } from "@/types";
 import {
   SortableContext,
-  arrayMove,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import clsx from "clsx";
@@ -43,46 +38,40 @@ import styles from "./BoardScreen.module.scss";
 export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
   // temp
   boardId: string;
-  board: DataProp<BoardResponse>;
-  addColumnAction: ActionProp<AddColumnDto, AddColumnResponse>;
-  addTaskAction: ActionProp<AddTaskDto, AddTaskResponse>;
-};
-
-type TempColumn = {
-  title: string;
-  id: string;
+  board: DataProp<Board>;
+  addColumnAction: ActionProp<string, AddColumnResponse>;
+  addTaskAction: ActionProp<Omit<AddTaskDto, "boardId">, AddTaskResponse>;
 };
 
 type TempTask = { title: string; id: string; columnId: string };
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
-  const { boardId, addColumnAction, addTaskAction, className, ...rest } = props;
-  const [columns, setColumns] = useState<TempColumn[]>([]); // temp
+  const { boardId, board, addColumnAction, addTaskAction, className, ...rest } =
+    props;
   const [tasks, setTasks] = useState<TempTask[]>([]); // temp
-  const [draggableColumn, setDraggableColumn] = useState<TempColumn | null>(
+  const [draggableColumnId, setDraggableColumnId] = useState<string | null>(
     null
   );
   const [draggableTask, setDraggableTask] = useState<TempTask | null>(null);
-
+  console.log(board.data);
   const addColumnHandler = (title: string) => {
-    setColumns((prevColumns) => {
-      return [...prevColumns, { title, id: crypto.randomUUID() }];
-    });
+    addColumnAction.action(title);
   };
 
   const updateColumnHandler = (id: string, title: string) => {
-    setColumns((prevColumns) => {
-      const columnIndex = prevColumns.findIndex((column) => column.id === id);
-      const updatedColumns = [...prevColumns];
-      updatedColumns[columnIndex] = { id, title };
-      return updatedColumns;
-    });
+    // setColumns((prevColumns) => {
+    //   const columnIndex = prevColumns.findIndex((column) => column.id === id);
+    //   const updatedColumns = [...prevColumns];
+    //   updatedColumns[columnIndex] = { id, title };
+    //   return updatedColumns;
+    // });
   };
 
   const addTaskHandler = (title: string, columnId: string) => {
-    setTasks((prev) => {
-      return [...prev, { title, id: crypto.randomUUID(), columnId }];
-    });
+    addTaskAction.action({ title, columnId: columnId });
+    // setTasks((prev) => {
+    //   return [...prev, { title, id: crypto.randomUUID(), columnId }];
+    // });
   };
 
   const updateTaskHandler = (id: string, title: string) => {
@@ -94,69 +83,80 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     });
   };
 
-  const formattedColumns = useMemo(
-    () =>
-      columns.map((c) => ({
-        ...c,
-        tasks: tasks.filter((t) => t.columnId === c.id),
-      })),
-    [columns, tasks]
-  );
+  const draggableColumn = useMemo(() => {
+    if (!board.data) return null;
+    if (!draggableColumnId) return null;
+
+    const column = board.data.columns.find(
+      (column) => column.id === draggableColumnId
+    );
+
+    if (!column) return null;
+
+    return column;
+  }, [board.data, draggableColumnId]);
 
   const dragEndHandler = useCallback(
     (event: DragEndEvent) => {
-      setDraggableColumn(null);
+      setDraggableColumnId(null);
       setDraggableTask(null);
       const { over, active } = event;
-      console.log(event);
-      const isColumn = columns.some((column) => column.id === active.id);
 
+      if (!board.data) return;
+      if (!active) return;
       if (!over) return;
       if (over.id === active.id) return;
 
-      if (isColumn) {
-        setColumns((prevColumns) => {
-          const oldIndex = prevColumns.findIndex(
-            (column) => column.id === active.id
-          );
-          const newIndex = prevColumns.findIndex(
-            (column) => column.id === over.id
-          );
-          return arrayMove(prevColumns, oldIndex, newIndex);
-        });
-      } else {
-        const task = tasks.find((task) => task.id === active.id);
-        if (!task) return;
+      const isColumn = board.data.columns.some(
+        (column) => column.id === active.id
+      );
 
-        setTasks((prevTasks) => {
-          const oldIndex = prevTasks.findIndex((task) => task.id === active.id);
-          const newTasks = [...prevTasks];
-          newTasks[oldIndex] = {
-            ...newTasks[oldIndex],
-            columnId: over.id.toString(),
-          };
-          return newTasks;
-        });
-      }
+      // if (isColumn) {
+      //   setColumns((prevColumns) => {
+      //     const oldIndex = prevColumns.findIndex(
+      //       (column) => column.id === active.id
+      //     );
+      //     const newIndex = prevColumns.findIndex(
+      //       (column) => column.id === over.id
+      //     );
+      //     return arrayMove(prevColumns, oldIndex, newIndex);
+      //   });
+      // } else {
+      //   const task = tasks.find((task) => task.id === active.id);
+      //   if (!task) return;
+
+      //   setTasks((prevTasks) => {
+      //     const oldIndex = prevTasks.findIndex((task) => task.id === active.id);
+      //     const newTasks = [...prevTasks];
+      //     newTasks[oldIndex] = {
+      //       ...newTasks[oldIndex],
+      //       columnId: over.id.toString(),
+      //     };
+      //     return newTasks;
+      //   });
+      // }
     },
-    [columns, tasks]
+    [board.data]
   );
 
   const dragStartHandler = useCallback(
     (event: DragStartEvent) => {
       const { active } = event;
 
+      if (!board.data) return;
       if (!active) return;
       if (!active.id) return;
 
-      const isColumn = columns.some((column) => column.id === active.id);
+      const isColumn = board.data.columns.some(
+        (column) => column.id === active.id
+      );
 
       if (isColumn) {
-        const column = columns.find((c) => c.id === active.id);
+        const column = board.data.columns.find((c) => c.id === active.id);
 
         if (!column) return;
 
-        setDraggableColumn(column);
+        setDraggableColumnId(column.id);
       } else {
         const task = tasks.find((task) => task.id === active.id);
 
@@ -165,7 +165,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
         setDraggableTask(task);
       }
     },
-    [columns, tasks]
+    [board.data, tasks]
   );
 
   return (
@@ -182,62 +182,29 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
       >
         <ul className={styles.columns}>
           <SortableContext
-            items={columns}
+            items={board.data?.columns.map((column) => column.id) || []}
             strategy={horizontalListSortingStrategy}
           >
-            {formattedColumns.map((column) => (
+            {board.data?.columns.map((column) => (
               <Sortable key={`${column.id}-${column.title}`} id={column.id}>
-                {({ setNodeRef, attributes, listeners, style, isDragging }) => (
-                  <li
+                {({ setNodeRef, attributes, listeners, isDragging }) => (
+                  <BoardColumn
                     ref={setNodeRef}
                     {...attributes}
+                    column={column}
+                    columnsLength={board.data?.columns.length || 0}
+                    dndListeners={listeners}
+                    onAddTask={async (title) =>
+                      addTaskHandler(title, column.id)
+                    }
+                    onUpdateTask={async (id, title) =>
+                      updateTaskHandler(id, title)
+                    }
+                    onUpdateColumn={async (title) =>
+                      updateColumnHandler(column.id, title)
+                    }
                     className={clsx(styles.column, isDragging && "z-50")}
-                  >
-                    <ColumnHead
-                      title={column.title}
-                      isPending={false}
-                      dndListeners={
-                        formattedColumns.length > 1 ? listeners : undefined
-                      }
-                      onUpdateTitle={async (value) =>
-                        updateColumnHandler(column.id, value)
-                      }
-                    />
-                    <Droppable id={column.id}>
-                      {({ setNodeRef }) => (
-                        <ul ref={setNodeRef} className={styles.tasks}>
-                          {column.tasks.map((task) => (
-                            <Draggable key={task.id} id={task.id}>
-                              {({ setNodeRef, listeners, attributes }) => (
-                                <li ref={setNodeRef} {...attributes}>
-                                  <ColumnTask
-                                    title={task.title}
-                                    isPending={false}
-                                    onUpdateTitle={async (value) =>
-                                      updateTaskHandler(task.id, value)
-                                    }
-                                    dndListeners={listeners}
-                                  />
-                                </li>
-                              )}
-                            </Draggable>
-                          ))}
-                          <li>
-                            <InputForm
-                              label="Create task"
-                              placeholder="Create task"
-                              cancel="Cancel task creation"
-                              submit="Create task"
-                              isPending={false}
-                              onFormSubmit={async (value) =>
-                                addTaskHandler(value, column.id)
-                              }
-                            />
-                          </li>
-                        </ul>
-                      )}
-                    </Droppable>
-                  </li>
+                  />
                 )}
               </Sortable>
             ))}
@@ -253,17 +220,14 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
             </li>
           </SortableContext>
         </ul>
-        <DragOverlay modifiers={[restrictToHorizontalAxis]}>
+        <DragOverlay>
           {draggableColumn && (
-            <ColumnHead
-              title={draggableColumn.title}
-              isPending={false}
-              dndListeners={{}}
-              onUpdateTitle={async () => {}}
+            <BoardColumn
+              isDragging
+              column={draggableColumn}
+              columnsLength={board.data?.columns.length || 0}
             />
           )}
-        </DragOverlay>
-        <DragOverlay>
           {draggableTask && (
             <ColumnTask
               title={draggableTask.title}

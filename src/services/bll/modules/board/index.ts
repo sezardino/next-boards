@@ -45,7 +45,20 @@ export class BoardBllModule extends BllModule {
   async board(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: id, userId, status: EntityStatus.ACTIVE },
-      include: { columns: { include: { tasks: true } } },
+      select: {
+        columns: {
+          select: {
+            id: true,
+            title: true,
+            order: true,
+            tasks: {
+              select: { id: true, title: true, columnId: true, order: true },
+              orderBy: { order: "asc" },
+            },
+          },
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
     if (!neededBoard) this.throw(BoardError.NotFound);

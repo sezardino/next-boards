@@ -10,13 +10,28 @@ export enum BoardError {
   NotFound = "NotFound",
 }
 
-export const boardResponseSchema = z
-  .object({
-    board: z.object({
+const boardSchema = z.object({
+  columns: z.array(
+    z.object({
       id: z.string(),
       title: z.string(),
-    }),
-  })
-  .or(z.object({ error: z.nativeEnum(BoardError) }));
+      order: z.number(),
+      tasks: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          order: z.number(),
+          columnId: z.string(),
+        })
+      ),
+    })
+  ),
+});
+
+export type Board = z.infer<typeof boardSchema>;
+
+export const boardResponseSchema = boardSchema.or(
+  z.object({ error: z.nativeEnum(BoardError) })
+);
 
 export type BoardResponse = z.infer<typeof boardResponseSchema>;

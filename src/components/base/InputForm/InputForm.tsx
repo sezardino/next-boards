@@ -21,12 +21,13 @@ type InputFormValues = {
 
 type Props = {
   initialValue?: string;
-  onFormSubmit: (value: string) => Promise<any>;
+  onFormSubmit?: (value: string) => Promise<any>;
   isPending: boolean;
   label: string;
   placeholder: string;
   submit: string;
   cancel: string;
+  disabled?: boolean;
 };
 
 export type InputFormProps = ComponentPropsWithoutRef<"form"> & Props;
@@ -43,6 +44,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
     placeholder,
     isPending,
     initialValue,
+    disabled,
     onFormSubmit,
     className,
     ...rest
@@ -62,11 +64,15 @@ export const InputForm: FC<InputFormProps> = (props) => {
   });
 
   const submitHandler = handleSubmit(async (values) => {
+    if (disabled || !onFormSubmit) return;
+
     await onFormSubmit(values.value);
     reset();
   });
 
   const keyDownHandler = (evt: KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+
     if (evt.key === "Enter") {
       submitHandler();
     }
@@ -77,11 +83,13 @@ export const InputForm: FC<InputFormProps> = (props) => {
   };
 
   const resetButtonHandler = (evt: MouseEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+
     reset();
     evt.currentTarget.blur();
   };
 
-  const isDisabled = isPending || isSubmitting;
+  const isDisabled = isPending || isSubmitting || disabled;
 
   return (
     <form

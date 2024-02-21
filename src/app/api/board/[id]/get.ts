@@ -15,7 +15,7 @@ export const getBoardHandler = async (_: NextRequest, params: Params) => {
       session?.user.id!
     );
 
-    return NextResponse.json({ board } as BoardResponse, { status: 200 });
+    return NextResponse.json(board as BoardResponse, { status: 200 });
   } catch (error) {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });

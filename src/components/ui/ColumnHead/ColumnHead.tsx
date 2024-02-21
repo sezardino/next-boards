@@ -8,7 +8,7 @@ import styles from "./ColumnHead.module.scss";
 
 type Props = {
   title: string;
-  onUpdateTitle: (title: string) => Promise<any>;
+  onUpdateTitle?: (title: string) => Promise<any>;
   isPending: boolean;
   dndListeners?: SyntheticListenerMap;
 };
@@ -28,6 +28,7 @@ export const ColumnHead: FC<ColumnHeadProps> = (props) => {
         submit="Change column name"
         initialValue={title}
         isPending={isPending}
+        disabled={!onUpdateTitle}
         onFormSubmit={onUpdateTitle}
       />
       {dndListeners && (
