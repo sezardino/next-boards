@@ -1,7 +1,9 @@
 import {
+  FocusEvent,
   KeyboardEvent,
   MouseEvent,
   useRef,
+  useState,
   type ComponentPropsWithoutRef,
   type FC,
 } from "react";
@@ -50,6 +52,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
     ...rest
   } = props;
   const formRef = useRef<HTMLFormElement | null>(null);
+  const [isManualFocus, setIsManualFocus] = useState(false);
 
   const {
     register,
@@ -68,6 +71,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
 
     await onFormSubmit(values.value);
     reset();
+    setIsManualFocus(false);
   });
 
   const keyDownHandler = (evt: KeyboardEvent<HTMLInputElement>) => {
@@ -79,7 +83,14 @@ export const InputForm: FC<InputFormProps> = (props) => {
 
     if (evt.key === "Escape") {
       reset();
+      evt.currentTarget.blur();
     }
+  };
+
+  const blurHandler = (evt: FocusEvent<HTMLInputElement, Element>) => {
+    setIsManualFocus(true);
+
+    register("value").onBlur(evt);
   };
 
   const resetButtonHandler = (evt: MouseEvent<HTMLButtonElement>) => {
@@ -87,6 +98,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
 
     reset();
     evt.currentTarget.blur();
+    setIsManualFocus(false);
   };
 
   const isDisabled = isPending || isSubmitting || disabled;
@@ -105,10 +117,16 @@ export const InputForm: FC<InputFormProps> = (props) => {
         name="value"
         placeholder={placeholder}
         disabled={isDisabled}
-        className={clsx(styles.input, "")}
+        className={clsx(styles.input, isManualFocus && styles.focus)}
         onKeyDown={keyDownHandler}
+        onBlur={blurHandler}
       />
-      <footer className={clsx(styles.footer, "group-focus-within:flex")}>
+      <footer
+        className={clsx(
+          styles.footer,
+          isManualFocus ? styles.visible : "group-focus-within:flex"
+        )}
+      >
         <Button
           type="submit"
           disabled={isDisabled}

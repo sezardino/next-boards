@@ -22,7 +22,11 @@ import { Sortable } from "@/components/modules/dnd/Sortable";
 import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { Board } from "@/services/bll/modules/board/dto";
-import { AddColumnResponse } from "@/services/bll/modules/column/dto";
+import {
+  AddColumnResponse,
+  UpdateColumnDto,
+  UpdateColumnResponse,
+} from "@/services/bll/modules/column/dto";
 import { AddTaskDto, AddTaskResponse } from "@/services/bll/modules/task/dto";
 import { ActionProp, DataProp } from "@/types";
 import {
@@ -38,46 +42,53 @@ export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
   board: DataProp<Board>;
   addColumnAction: ActionProp<string, AddColumnResponse>;
   addTaskAction: ActionProp<Omit<AddTaskDto, "boardId">, AddTaskResponse>;
+  updateColumnAction: ActionProp<
+    Omit<UpdateColumnDto, "boardId">,
+    UpdateColumnResponse
+  >;
 };
 
 type TempTask = { title: string; id: string; columnId: string };
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
-  const { boardId, board, addColumnAction, addTaskAction, className, ...rest } =
-    props;
-  const [tasks, setTasks] = useState<TempTask[]>([]); // temp
+  const {
+    boardId,
+    board,
+    addColumnAction,
+    addTaskAction,
+    updateColumnAction,
+    className,
+    ...rest
+  } = props;
   const [draggableColumnId, setDraggableColumnId] = useState<string | null>(
     null
   );
   const [draggableTask, setDraggableTask] = useState<TempTask | null>(null);
-  console.log(board.data);
+
   const addColumnHandler = (title: string) => {
     addColumnAction.action(title);
   };
 
   const updateColumnHandler = (id: string, title: string) => {
-    // setColumns((prevColumns) => {
-    //   const columnIndex = prevColumns.findIndex((column) => column.id === id);
-    //   const updatedColumns = [...prevColumns];
-    //   updatedColumns[columnIndex] = { id, title };
-    //   return updatedColumns;
-    // });
+    const neededColumn = board.data?.columns.find((column) => column.id === id);
+
+    if (!neededColumn) return;
+    if (neededColumn.title === title) return;
+
+    updateColumnAction.action({ columnId: id, title });
   };
 
   const addTaskHandler = (title: string, columnId: string) => {
     addTaskAction.action({ title, columnId: columnId });
-    // setTasks((prev) => {
-    //   return [...prev, { title, id: crypto.randomUUID(), columnId }];
-    // });
   };
 
   const updateTaskHandler = (id: string, title: string) => {
-    setTasks((prev) => {
-      const taskIndex = prev.findIndex((column) => column.id === id);
-      const updatedTasks = [...prev];
-      updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], id, title };
-      return updatedTasks;
-    });
+    // setTasks((prev) => {
+    //   const taskIndex = prev.findIndex((column) => column.id === id);
+    //   const updatedTasks = [...prev];
+    //   updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], id, title };
+    //   return updatedTasks;
+    // });
   };
 
   const draggableColumn = useMemo(() => {
@@ -155,14 +166,12 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
 
         setDraggableColumnId(column.id);
       } else {
-        const task = tasks.find((task) => task.id === active.id);
-
-        if (!task) return;
-
-        setDraggableTask(task);
+        // const task = tasks.find((task) => task.id === active.id);
+        // if (!task) return;
+        // setDraggableTask(task);
       }
     },
-    [board.data, tasks]
+    [board.data]
   );
 
   return (

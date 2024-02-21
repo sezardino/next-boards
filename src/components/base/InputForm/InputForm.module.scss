@@ -4,10 +4,14 @@
 
 .input {
   @apply py-1 w-full bg-transparent border-0 border-b-2 border-transparent focus:border-gray-500 focus:outline-none;
+
+  &.focus {
+    @apply border-gray-500;
+  }
 }
 
 .footer {
-  @apply absolute -bottom-1 right-0 translate-y-full gap-1 items-center hidden z-10;
+  @apply absolute -bottom-1 right-0 translate-y-full gap-1 items-center hidden z-50;
 
   &.visible {
     @apply flex;
