@@ -4,9 +4,10 @@ import { BoardScreen } from "@/components/screens/Board/BoardScreen";
 import { useAddColumnMutation } from "@/hooks/mutations/column/add";
 import { useUpdateColumnMutation } from "@/hooks/mutations/column/update";
 import { useAddTaskMutation } from "@/hooks/mutations/task/add";
+import { useUpdateTaskMutation } from "@/hooks/mutations/task/update";
 import { useBoardQuery } from "@/hooks/queries/boards/board";
 import { UpdateColumnDto } from "@/services/bll/modules/column/dto";
-import { AddTaskDto } from "@/services/bll/modules/task/dto";
+import { AddTaskDto, UpdateTaskDto } from "@/services/bll/modules/task/dto";
 import { useCallback } from "react";
 
 type Props = { params: { id: string } };
@@ -23,6 +24,8 @@ export const BoardPageWrapper = (props: Props) => {
 
   const { mutateAsync: updateColumn, isPending: isUpdateColumnPending } =
     useUpdateColumnMutation();
+  const { mutateAsync: updateTask, isPending: isUpdateTaskPending } =
+    useUpdateTaskMutation();
 
   const addColumnHelper = useCallback(
     async (title: string) => addColumn({ title, boardId: id }),
@@ -39,6 +42,12 @@ export const BoardPageWrapper = (props: Props) => {
     async (dto: Omit<UpdateColumnDto, "boardId">) =>
       updateColumn({ ...dto, boardId: id }),
     [id, updateColumn]
+  );
+
+  const updateTaskHandler = useCallback(
+    async (dto: Omit<UpdateTaskDto, "boardId">) =>
+      updateTask({ ...dto, boardId: id }),
+    [id, updateTask]
   );
 
   if (board && "error" in board) return null;
@@ -58,6 +67,10 @@ export const BoardPageWrapper = (props: Props) => {
       updateColumnAction={{
         action: updateColumnHandler,
         isPending: isUpdateColumnPending,
+      }}
+      updateTaskAction={{
+        action: updateTaskHandler,
+        isPending: isUpdateTaskPending,
       }}
     />
   );

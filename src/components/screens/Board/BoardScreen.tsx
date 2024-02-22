@@ -27,7 +27,12 @@ import {
   UpdateColumnDto,
   UpdateColumnResponse,
 } from "@/services/bll/modules/column/dto";
-import { AddTaskDto, AddTaskResponse } from "@/services/bll/modules/task/dto";
+import {
+  AddTaskDto,
+  AddTaskResponse,
+  UpdateTaskDto,
+  UpdateTaskResponse,
+} from "@/services/bll/modules/task/dto";
 import { ActionProp, DataProp } from "@/types";
 import {
   SortableContext,
@@ -47,9 +52,11 @@ export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
     Omit<UpdateColumnDto, "boardId">,
     UpdateColumnResponse
   >;
+  updateTaskAction: ActionProp<
+    Omit<UpdateTaskDto, "boardId">,
+    UpdateTaskResponse
+  >;
 };
-
-type TempTask = { title: string; id: string; columnId: string };
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
   const {
@@ -58,6 +65,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     addColumnAction,
     addTaskAction,
     updateColumnAction,
+    updateTaskAction,
     className,
     ...rest
   } = props;
@@ -84,6 +92,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
   };
 
   const updateTaskHandler = (id: string, title: string) => {
+    updateTaskAction.action({ taskId: id, title });
     // setTasks((prev) => {
     //   const taskIndex = prev.findIndex((column) => column.id === id);
     //   const updatedTasks = [...prev];

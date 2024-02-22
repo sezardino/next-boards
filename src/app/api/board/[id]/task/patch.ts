@@ -9,9 +9,9 @@ export const patchBoardTaskHandler = async (req: NextRequest) => {
     const dto = await req.json();
 
     const session = await getNextAuthSession();
-    const response = await bllService.task.add(dto, session?.user.id!);
+    const response = await bllService.task.update(dto, session?.user.id!);
 
-    return NextResponse.json(response as AddTaskResponse, { status: 201 });
+    return NextResponse.json(response as AddTaskResponse, { status: 200 });
   } catch (error) {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });

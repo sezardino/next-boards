@@ -1,13 +1,21 @@
 import { z } from "zod";
 
-export const tasksOrderDtoSchema = z.object({
+export const updateTaskDtoSchema = z.object({
   boardId: z.string(),
-  columnId: z.string(),
-  tasks: z.array(z.string()),
+  newColumnId: z.string().optional(),
+  taskId: z.string(),
+  title: z.string().optional(),
+  order: z.array(z.string()).optional(),
 });
 
-export type TasksOrderDto = z.infer<typeof tasksOrderDtoSchema>;
+export enum UpdateTaskError {
+  WrongData = "WrongData",
+}
 
-export const tasksOrderResponseSchema = z.object({});
+export type UpdateTaskDto = z.infer<typeof updateTaskDtoSchema>;
 
-export type TasksOrderResponse = z.infer<typeof tasksOrderResponseSchema>;
+export const updateTaskResponseSchema = z
+  .object({})
+  .or(z.object({ error: z.nativeEnum(UpdateTaskError) }));
+
+export type UpdateTaskResponse = z.infer<typeof updateTaskResponseSchema>;

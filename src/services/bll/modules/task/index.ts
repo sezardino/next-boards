@@ -2,9 +2,8 @@ import { BllModule } from "../../utils";
 import {
   AddTaskDto,
   AddTaskError,
-  ChangeTaskColumnDto,
-  ChangeTaskColumnError,
-  TasksOrderDto,
+  UpdateTaskDto,
+  UpdateTaskError,
 } from "./dto";
 
 export class TaskBllModule extends BllModule {
@@ -31,71 +30,58 @@ export class TaskBllModule extends BllModule {
     });
   }
 
-  async update(dto: TasksOrderDto, userId: string) {
+  async update(dto: UpdateTaskDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: {
-        id: dto.boardId,
-        userId,
-        columns: { some: { id: dto.columnId } },
-      },
+      where: { id: dto.boardId, userId },
       select: { id: true },
     });
 
-    if (!neededBoard) this.throw(AddTaskError.WrongData);
+    if (!neededBoard) this.throw(UpdateTaskError.WrongData);
 
-    return this.prismaService.$transaction(
-      dto.tasks.map((task, index) =>
-        this.prismaService.task.update({
-          where: { id: task, boardId: dto.boardId },
-          data: { order: index },
-        })
-      )
-    );
-  }
-
-  async taskColumn(dto: ChangeTaskColumnDto, userId: string) {
-    const neededBoard = await this.prismaService.board.findUnique({
-      where: {
-        id: dto.boardId,
-        userId,
-        columns: { some: { id: dto.columnId } },
-      },
-      select: {
-        id: true,
-        columns: {
-          where: { id: dto.columnId },
-          select: {
-            tasks: {
-              orderBy: { order: "asc" },
-              select: { id: true },
-            },
-          },
-        },
-      },
+    const neededTask = await this.prismaService.task.findUnique({
+      where: { id: dto.taskId, boardId: dto.boardId },
     });
 
-    if (!neededBoard || !neededBoard.columns[0])
-      this.throw(ChangeTaskColumnError.NotFound);
+    if (!neededTask) this.throw(UpdateTaskError.WrongData);
 
-    const tasks = neededBoard.columns[0].tasks.map((task) => task.id);
+    if (dto.order && !dto.newColumnId) {
+      await this.prismaService.$transaction(
+        dto.order.map((column, index) =>
+          this.prismaService.task.update({
+            where: {
+              id: column,
+              columnId: neededTask.columnId,
+              boardId: dto.boardId,
+            },
+            data: { order: index },
+          })
+        )
+      );
+    } else if (dto.newColumnId && dto.order) {
+      const neededColumn = await this.prismaService.column.findUnique({
+        where: { id: dto.newColumnId, boardId: dto.boardId },
+        select: { id: true },
+      });
 
-    const beforeIndex = tasks.indexOf(dto.before || "") || tasks.length - 1;
-    const newOrder = [
-      ...tasks.slice(0, beforeIndex),
-      dto.taskId,
-      ...tasks.slice(beforeIndex),
-    ];
+      if (!neededColumn) this.throw(UpdateTaskError.WrongData);
 
-    return this.prismaService.$transaction(
-      newOrder.map((task, index) =>
-        this.prismaService.task.update({
-          where: { id: task, boardId: dto.boardId },
-          data: {
-            order: index,
-            columnId: task === dto.taskId ? dto.columnId : undefined,
-          },
-        })
-      )
-    );
+      await this.prismaService.$transaction(
+        dto.order.map((task, index) =>
+          this.prismaService.task.update({
+            where: {
+              id: task,
+              columnId: dto.taskId === task ? dto.newColumnId : undefined,
+            },
+            data: { order: index },
+          })
+        )
+      );
+    }
+
+    return this.prismaService.task.update({
+      where: { id: dto.taskId, boardId: dto.boardId },
+      data: { title: dto.title },
+      select: { id: true, title: true, order: true },
+    });
   }
 }
