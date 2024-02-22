@@ -282,7 +282,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
                   placeholder="Create column"
                   cancel="Cancel column creation"
                   submit="Create column"
-                  isPending={false}
+                  isPending={addColumnAction.isPending}
                   onFormSubmit={async (value) => addColumnHandler(value)}
                 />
               </li>
