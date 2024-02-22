@@ -14,6 +14,7 @@ import clsx from "clsx";
 import { Draggable } from "../../dnd/Draggable";
 import { Droppable } from "../../dnd/Dropable";
 
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import styles from "./BoardColumn.module.scss";
 
 type PickedColumnHeadProps = Pick<ColumnHeadProps, "dndListeners">;
@@ -48,52 +49,62 @@ const BoardColumnComponent: ForwardRefRenderFunction<
   } = props;
 
   return (
-    <li {...rest} ref={ref} className={clsx(styles.element, className)}>
-      <ColumnHead
-        title={column.title}
-        isPending={false}
-        dndListeners={columnsLength > 1 ? dndListeners : undefined}
-        onUpdateTitle={
-          isDragging ? undefined : async (value) => onUpdateColumn?.(value)
-        }
-      />
-      <Droppable id={column.id}>
-        {({ setNodeRef }) => (
-          <ul ref={setNodeRef} className={styles.tasks}>
-            {column.tasks.map((task) => (
-              <Draggable key={task.id} id={task.id}>
-                {({ setNodeRef, listeners, attributes, style }) => (
-                  <li ref={setNodeRef} {...attributes} style={style}>
-                    <ColumnTask
-                      title={task.title}
-                      isPending={false}
-                      onUpdateTitle={
-                        isDragging
-                          ? undefined
-                          : async (value) => onUpdateTask?.(task.id, value)
-                      }
-                      dndListeners={listeners}
-                    />
-                  </li>
-                )}
-              </Draggable>
-            ))}
-            {!isDragging && onAddTask && (
-              <li>
-                <InputForm
-                  label="Create task"
-                  placeholder="Create task"
-                  cancel="Cancel task creation"
-                  submit="Create task"
-                  isPending={false}
-                  onFormSubmit={async (value) => onAddTask(value)}
-                />
-              </li>
-            )}
-          </ul>
-        )}
-      </Droppable>
-    </li>
+    <Card
+      as="li"
+      {...rest}
+      // @ts-ignore
+      ref={ref}
+      className={clsx(styles.element, className)}
+    >
+      <CardHeader>
+        <ColumnHead
+          title={column.title}
+          isPending={false}
+          dndListeners={columnsLength > 1 ? dndListeners : undefined}
+          onUpdateTitle={
+            isDragging ? undefined : async (value) => onUpdateColumn?.(value)
+          }
+        />
+      </CardHeader>
+      <CardBody>
+        <Droppable id={column.id}>
+          {({ setNodeRef }) => (
+            <ul ref={setNodeRef} className={styles.tasks}>
+              {column.tasks.map((task) => (
+                <Draggable key={task.id} id={task.id}>
+                  {({ setNodeRef, listeners, attributes, style }) => (
+                    <li ref={setNodeRef} {...attributes} style={style}>
+                      <ColumnTask
+                        title={task.title}
+                        isPending={false}
+                        onUpdateTitle={
+                          isDragging
+                            ? undefined
+                            : async (value) => onUpdateTask?.(task.id, value)
+                        }
+                        dndListeners={listeners}
+                      />
+                    </li>
+                  )}
+                </Draggable>
+              ))}
+              {!isDragging && onAddTask && (
+                <li>
+                  <InputForm
+                    label="Create task"
+                    placeholder="Create task"
+                    cancel="Cancel task creation"
+                    submit="Create task"
+                    isPending={false}
+                    onFormSubmit={async (value) => onAddTask(value)}
+                  />
+                </li>
+              )}
+            </ul>
+          )}
+        </Droppable>
+      </CardBody>
+    </Card>
   );
 };
 

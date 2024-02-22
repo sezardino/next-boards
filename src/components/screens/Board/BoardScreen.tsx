@@ -64,7 +64,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
   const [draggableColumnId, setDraggableColumnId] = useState<string | null>(
     null
   );
-  const [draggableTask, setDraggableTask] = useState<TempTask | null>(null);
+  const [draggableTaskId, setDraggableTaskId] = useState<string | null>(null);
 
   const addColumnHandler = (title: string) => {
     addColumnAction.action(title);
@@ -105,10 +105,24 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     return column;
   }, [board.data, draggableColumnId]);
 
+  const draggableTask = useMemo(() => {
+    if (!board.data) return null;
+    if (!draggableTaskId) return null;
+
+    const column = board.data.columns
+      .map((c) => c.tasks)
+      .flat()
+      .find((task) => task.id === draggableTaskId);
+
+    if (!column) return null;
+
+    return column;
+  }, [board.data, draggableTaskId]);
+
   const dragEndHandler = useCallback(
     (event: DragEndEvent) => {
       setDraggableColumnId(null);
-      setDraggableTask(null);
+      setDraggableTaskId(null);
       const { over, active } = event;
 
       if (!board.data) return;
@@ -152,7 +166,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
       //   });
       // }
     },
-    [board.data]
+    [board.data, updateColumnAction]
   );
 
   const dragStartHandler = useCallback(
@@ -174,9 +188,13 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
 
         setDraggableColumnId(column.id);
       } else {
-        // const task = tasks.find((task) => task.id === active.id);
-        // if (!task) return;
-        // setDraggableTask(task);
+        const task = board.data.columns
+          .map((c) => c.tasks)
+          .flat()
+          .find((task) => task.id === active.id);
+        if (!task) return;
+
+        setDraggableTaskId(active.id.toString());
       }
     },
     [board.data]
@@ -246,8 +264,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
             <ColumnTask
               title={draggableTask.title}
               isPending={false}
-              dndListeners={{}}
-              onUpdateTitle={async () => {}}
+              isDragging
             />
           )}
         </DragOverlay>
