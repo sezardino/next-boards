@@ -27,7 +27,6 @@ export const AuthPageWrapper = () => {
         router.replace(PageUrls.home);
         return;
       } else {
-        console.log(res);
         toast("Error login", { description: res?.error });
         return Promise.reject();
       }

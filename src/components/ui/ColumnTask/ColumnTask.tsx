@@ -13,12 +13,14 @@ type Props = {
   isPending: boolean;
   dndListeners?: SyntheticListenerMap;
   isDragging?: boolean;
+  isPlaceholder?: boolean;
 };
 
 export type ColumnTaskProps = CardProps & Props;
 
 export const ColumnTask: FC<ColumnTaskProps> = (props) => {
   const {
+    isPlaceholder,
     isDragging,
     dndListeners,
     title,
@@ -38,8 +40,8 @@ export const ColumnTask: FC<ColumnTaskProps> = (props) => {
           submit="Change task name"
           initialValue={title}
           isPending={isPending}
-          disabled={isDragging}
-          onFormSubmit={onUpdateTitle}
+          disabled={isDragging || isPlaceholder || !onUpdateTitle}
+          onFormSubmit={onUpdateTitle ? onUpdateTitle : () => Promise.resolve()}
         />
         {dndListeners && (
           <button type="button" {...dndListeners}>

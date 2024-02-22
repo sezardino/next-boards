@@ -23,7 +23,7 @@ type InputFormValues = {
 
 type Props = {
   initialValue?: string;
-  onFormSubmit?: (value: string) => Promise<any>;
+  onFormSubmit: (value: string) => Promise<any>;
   isPending: boolean;
   label: string;
   placeholder: string;

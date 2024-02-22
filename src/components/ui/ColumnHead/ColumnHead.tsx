@@ -11,13 +11,21 @@ type Props = {
   onUpdateTitle?: (title: string) => Promise<any>;
   isPending: boolean;
   dndListeners?: SyntheticListenerMap;
+  isDragging?: boolean;
 };
 
 export type ColumnHeadProps = ComponentPropsWithoutRef<"div"> & Props;
 
 export const ColumnHead: FC<ColumnHeadProps> = (props) => {
-  const { title, onUpdateTitle, isPending, dndListeners, className, ...rest } =
-    props;
+  const {
+    title,
+    onUpdateTitle,
+    isPending,
+    isDragging,
+    dndListeners,
+    className,
+    ...rest
+  } = props;
 
   return (
     <div {...rest} className={clsx(styles.element, className)}>
@@ -29,9 +37,9 @@ export const ColumnHead: FC<ColumnHeadProps> = (props) => {
         initialValue={title}
         isPending={isPending}
         disabled={!onUpdateTitle}
-        onFormSubmit={onUpdateTitle}
+        onFormSubmit={onUpdateTitle ? onUpdateTitle : () => Promise.resolve()}
       />
-      {dndListeners && (
+      {(isDragging || dndListeners) && (
         <button type="button" {...dndListeners}>
           <Icon name="GripVertical" />
         </button>

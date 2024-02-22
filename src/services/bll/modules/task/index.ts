@@ -57,30 +57,11 @@ export class TaskBllModule extends BllModule {
           })
         )
       );
-    } else if (dto.newColumnId && dto.order) {
-      const neededColumn = await this.prismaService.column.findUnique({
-        where: { id: dto.newColumnId, boardId: dto.boardId },
-        select: { id: true },
-      });
-
-      if (!neededColumn) this.throw(UpdateTaskError.WrongData);
-
-      await this.prismaService.$transaction(
-        dto.order.map((task, index) =>
-          this.prismaService.task.update({
-            where: {
-              id: task,
-              columnId: dto.taskId === task ? dto.newColumnId : undefined,
-            },
-            data: { order: index },
-          })
-        )
-      );
     }
 
     return this.prismaService.task.update({
       where: { id: dto.taskId, boardId: dto.boardId },
-      data: { title: dto.title },
+      data: { title: dto.title, column: { connect: { id: dto.newColumnId } } },
       select: { id: true, title: true, order: true },
     });
   }
