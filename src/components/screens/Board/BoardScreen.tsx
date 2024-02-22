@@ -197,6 +197,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
                       ref={setNodeRef}
                       {...attributes}
                       column={column}
+                      isDragging={isDragging}
                       columnsLength={board.data?.columns.length || 0}
                       dndListeners={listeners}
                       onAddTask={async (title) =>

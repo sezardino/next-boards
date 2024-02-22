@@ -1,3 +1,7 @@
 .element {
   @apply list-none h-full;
+
+  &.dragging {
+    @apply opacity-40;
+  }
 }

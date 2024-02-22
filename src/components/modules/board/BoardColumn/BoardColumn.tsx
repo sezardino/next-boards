@@ -67,76 +67,82 @@ const BoardColumnComponent: ForwardRefRenderFunction<
       {...rest}
       // @ts-ignore
       ref={ref}
-      className={clsx(styles.element, className)}
+      className={clsx(styles.element, isDragging && styles.dragging, className)}
     >
-      <CardHeader>
-        <ColumnHead
-          title={column.title}
-          isPending={false}
-          isDragging={isPlaceholder}
-          dndListeners={columnsLength > 1 ? dndListeners : undefined}
-          onUpdateTitle={
-            isPlaceholder ? undefined : async (value) => onUpdateColumn?.(value)
-          }
-        />
-      </CardHeader>
+      {!isDragging && (
+        <>
+          <CardHeader>
+            <ColumnHead
+              title={column.title}
+              isPending={false}
+              isDragging={isPlaceholder}
+              dndListeners={columnsLength > 1 ? dndListeners : undefined}
+              onUpdateTitle={
+                isPlaceholder
+                  ? undefined
+                  : async (value) => onUpdateColumn?.(value)
+              }
+            />
+          </CardHeader>
 
-      <CardBody>
-        <Droppable id={column.id}>
-          {({ setNodeRef }) => (
-            <ul ref={setNodeRef} className={styles.tasks}>
-              <SortableContext
-                items={taskIds}
-                strategy={horizontalListSortingStrategy}
-              >
-                {column.tasks?.map((task) => (
-                  <Draggable
-                    key={task.id}
-                    id={task.id}
-                    data={{ task: { ...task, columnId: column.id } }}
+          <CardBody>
+            <Droppable id={column.id}>
+              {({ setNodeRef }) => (
+                <ul ref={setNodeRef} className={styles.tasks}>
+                  <SortableContext
+                    items={taskIds}
+                    strategy={horizontalListSortingStrategy}
                   >
-                    {({
-                      setNodeRef,
-                      listeners,
-                      attributes,
-                      style,
-                      isDragging: isTaskDragging,
-                    }) => (
-                      <li ref={setNodeRef} {...attributes} style={style}>
-                        <ColumnTask
-                          title={task.title}
-                          isPending={false}
-                          isDragging={isDragging || isTaskDragging}
-                          onUpdateTitle={async (value) =>
-                            onUpdateTask?.(task.id, value)
-                          }
-                          dndListeners={listeners}
-                        />
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-              </SortableContext>
+                    {column.tasks?.map((task) => (
+                      <Draggable
+                        key={task.id}
+                        id={task.id}
+                        data={{ task: { ...task, columnId: column.id } }}
+                      >
+                        {({
+                          setNodeRef,
+                          listeners,
+                          attributes,
+                          style,
+                          isDragging: isTaskDragging,
+                        }) => (
+                          <li ref={setNodeRef} {...attributes} style={style}>
+                            <ColumnTask
+                              title={task.title}
+                              isPending={false}
+                              isDragging={isDragging || isTaskDragging}
+                              onUpdateTitle={async (value) =>
+                                onUpdateTask?.(task.id, value)
+                              }
+                              dndListeners={listeners}
+                            />
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                  </SortableContext>
 
-              <li>
-                <InputForm
-                  label="Create task"
-                  placeholder="Create task"
-                  cancel="Cancel task creation"
-                  submit="Create task"
-                  isPending={false}
-                  disabled={isPlaceholder}
-                  onFormSubmit={
-                    onAddTask
-                      ? async (value) => onAddTask(value)
-                      : () => Promise.resolve()
-                  }
-                />
-              </li>
-            </ul>
-          )}
-        </Droppable>
-      </CardBody>
+                  <li>
+                    <InputForm
+                      label="Create task"
+                      placeholder="Create task"
+                      cancel="Cancel task creation"
+                      submit="Create task"
+                      isPending={false}
+                      disabled={isPlaceholder}
+                      onFormSubmit={
+                        onAddTask
+                          ? async (value) => onAddTask(value)
+                          : () => Promise.resolve()
+                      }
+                    />
+                  </li>
+                </ul>
+              )}
+            </Droppable>
+          </CardBody>
+        </>
+      )}
     </Card>
   );
 };
