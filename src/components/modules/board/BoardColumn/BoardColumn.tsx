@@ -71,19 +71,19 @@ const BoardColumnComponent: ForwardRefRenderFunction<
     >
       {!isDragging && (
         <>
-          <CardHeader>
-            <ColumnHead
-              title={column.title}
-              isPending={false}
-              isDragging={isPlaceholder}
-              dndListeners={columnsLength > 1 ? dndListeners : undefined}
-              onUpdateTitle={
-                isPlaceholder
-                  ? undefined
-                  : async (value) => onUpdateColumn?.(value)
-              }
-            />
-          </CardHeader>
+          <CardHeader
+            as={ColumnHead}
+            title={column.title}
+            isPending={false}
+            isDragging={isPlaceholder}
+            dndListeners={columnsLength > 1 ? dndListeners : undefined}
+            className={styles.head}
+            onUpdateTitle={
+              isPlaceholder
+                ? undefined
+                : async (value: string) => onUpdateColumn?.(value)
+            }
+          />
 
           <CardBody>
             <Droppable id={column.id}>

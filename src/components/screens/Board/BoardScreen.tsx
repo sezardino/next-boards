@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useMemo,
   useState,
   type ComponentPropsWithoutRef,
   type FC,
@@ -21,6 +20,7 @@ import { BoardColumn } from "@/components/modules/board/BoardColumn/BoardColumn"
 import { Sortable } from "@/components/modules/dnd/Sortable";
 import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import { Heading } from "@/components/ui/Heading/Heading";
+import { useBoard } from "@/hooks/use-board";
 import { Board } from "@/services/bll/modules/board/dto";
 import {
   AddColumnResponse,
@@ -73,31 +73,62 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     className,
     ...rest
   } = props;
+  const [columns, setColumns, { columnIds }] = useBoard(board.data);
+
   const [draggableColumn, setDraggableColumn] =
     useState<DraggableColumn | null>(null);
   const [draggableTask, setDraggableTask] = useState<DraggableTask | null>(
     null
   );
 
-  const columnIds = useMemo(
-    () => board.data?.columns.map((c) => c.id) || [],
-    [board.data?.columns]
-  );
-
   const addColumnHandler = (title: string) => {
+    setColumns((prev) => [
+      ...prev,
+      {
+        id: new Date().toString(),
+        title,
+        tasks: [],
+        order: prev.length,
+      },
+    ]);
     addColumnAction.action(title);
   };
 
   const updateColumnHandler = (id: string, title: string) => {
-    const neededColumn = board.data?.columns.find((column) => column.id === id);
+    const neededColumn = columns.find((column) => column.id === id);
 
     if (!neededColumn) return;
     if (neededColumn.title === title) return;
 
+    setColumns((prev) =>
+      prev.map((column) => (column.id === id ? { ...column, title } : column))
+    );
     updateColumnAction.action({ columnId: id, title });
   };
 
   const addTaskHandler = (title: string, columnId: string) => {
+    setColumns((prev) => {
+      const neededColumn = prev.find((column) => column.id === columnId);
+
+      if (!neededColumn) return prev;
+
+      const newTask = {
+        id: new Date().toString(),
+        title,
+        columnId,
+        order: neededColumn.tasks.length,
+      };
+
+      return prev.map((c) => {
+        if (c.id !== columnId) return c;
+
+        return {
+          ...c,
+          tasks: [...c.tasks, newTask],
+        };
+      });
+    });
+
     addTaskAction.action({ title, columnId: columnId });
   };
 
@@ -127,6 +158,8 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
 
         const newOrder = arrayMove(columnIds, oldIndex, newIndex);
 
+        setColumns((prev) => arrayMove(prev, oldIndex, newIndex));
+
         updateColumnAction.action({
           columnId: active.id.toString(),
           order: newOrder,
@@ -138,13 +171,42 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
 
         if (isInSameColumn) return;
 
+        const neededTask = columns
+          .find((column) => column.id === contextData.task.columnId)
+          ?.tasks.find((task) => task.id === active.id);
+
+        if (!neededTask) return;
+
+        setColumns((prev) => {
+          const newColumns = prev.map((column) => {
+            if (column.id === over.id) {
+              return {
+                ...column,
+                tasks: [
+                  ...column.tasks,
+                  { ...neededTask, order: column.tasks.length },
+                ],
+              };
+            }
+
+            return {
+              ...column,
+              tasks: column.tasks
+                .filter((task) => task.id !== active.id)
+                .map((task, index) => ({ ...task, order: index })),
+            };
+          });
+
+          return newColumns;
+        });
+
         updateTaskAction.action({
           newColumnId: over.id.toString(),
           taskId: active.id.toString(),
         });
       }
     },
-    [columnIds, updateColumnAction, updateTaskAction]
+    [columnIds, columns, setColumns, updateColumnAction, updateTaskAction]
   );
 
   const dragStartHandler = useCallback((event: DragStartEvent) => {
@@ -186,7 +248,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
               items={columnIds}
               strategy={horizontalListSortingStrategy}
             >
-              {board.data?.columns.map((column) => (
+              {columns.map((column) => (
                 <Sortable
                   key={`${column.id}-${column.title}`}
                   id={column.id}
@@ -198,7 +260,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
                       {...attributes}
                       column={column}
                       isDragging={isDragging}
-                      columnsLength={board.data?.columns.length || 0}
+                      columnsLength={columns.length || 0}
                       dndListeners={listeners}
                       onAddTask={async (title) =>
                         addTaskHandler(title, column.id)
@@ -233,7 +295,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
                   <BoardColumn
                     isPlaceholder
                     column={draggableColumn}
-                    columnsLength={board.data?.columns.length || 0}
+                    columnsLength={columns.length || 0}
                   />
                 )}
                 {draggableTask && (

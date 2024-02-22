@@ -5,3 +5,7 @@
     @apply opacity-40;
   }
 }
+
+.tasks {
+  @apply grid grid-cols-1 gap-2;
+}

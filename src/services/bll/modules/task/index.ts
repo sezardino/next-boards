@@ -33,13 +33,23 @@ export class TaskBllModule extends BllModule {
   async update(dto: UpdateTaskDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.boardId, userId },
-      select: { id: true },
+      select: {
+        id: true,
+        columns: {
+          select: {
+            id: true,
+            tasks: { select: { id: true } },
+            _count: { select: { tasks: true } },
+          },
+        },
+      },
     });
 
     if (!neededBoard) this.throw(UpdateTaskError.WrongData);
 
     const neededTask = await this.prismaService.task.findUnique({
       where: { id: dto.taskId, boardId: dto.boardId },
+      select: { id: true, columnId: true },
     });
 
     if (!neededTask) this.throw(UpdateTaskError.WrongData);
@@ -59,10 +69,32 @@ export class TaskBllModule extends BllModule {
       );
     }
 
-    return this.prismaService.task.update({
+    const updatedTask = await this.prismaService.task.update({
       where: { id: dto.taskId, boardId: dto.boardId },
-      data: { title: dto.title, column: { connect: { id: dto.newColumnId } } },
+      data: {
+        title: dto.title,
+        column: { connect: { id: dto.newColumnId } },
+        order: neededBoard.columns.find(
+          (column) => column.id === dto.newColumnId
+        )?._count.tasks,
+      },
       select: { id: true, title: true, order: true },
     });
+
+    const oldColumnsTasksWithoutUpdated =
+      neededBoard.columns
+        .find((c) => c.id === neededTask.columnId)
+        ?.tasks.filter((t) => t.id !== dto.taskId) || [];
+
+    await this.prismaService.$transaction(
+      oldColumnsTasksWithoutUpdated.map((task, index) =>
+        this.prismaService.task.update({
+          where: { id: task.id },
+          data: { order: index },
+        })
+      )
+    );
+
+    return updatedTask;
   }
 }
