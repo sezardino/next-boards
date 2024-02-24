@@ -69,7 +69,7 @@ export const BoardColumn: FC<BoardColumnProps> = (props) => {
         }
       />
       <SortableContext key={column.id} items={taskIds}>
-        <CardBody>
+        <CardBody className={styles.body}>
           <ul className={styles.tasks}>
             {column.tasks.map((task) => (
               <Sortable

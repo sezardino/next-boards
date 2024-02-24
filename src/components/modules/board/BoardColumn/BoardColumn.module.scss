@@ -6,6 +6,10 @@
   }
 }
 
+.body {
+  @apply pb-8;
+}
+
 .tasks {
   @apply grid grid-cols-1 gap-2;
 }

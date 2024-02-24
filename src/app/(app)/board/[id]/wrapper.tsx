@@ -54,7 +54,6 @@ export const BoardPageWrapper = (props: Props) => {
 
   return (
     <BoardScreen
-      boardId={id}
       board={{ data: board, isLoading: isBoardLoading }}
       addColumnAction={{
         action: addColumnHelper,
