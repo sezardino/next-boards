@@ -2,7 +2,6 @@ import {
   FocusEvent,
   KeyboardEvent,
   MouseEvent,
-  useRef,
   useState,
   type ComponentPropsWithoutRef,
   type FC,
@@ -51,7 +50,6 @@ export const InputForm: FC<InputFormProps> = (props) => {
     className,
     ...rest
   } = props;
-  const formRef = useRef<HTMLFormElement | null>(null);
   const [isManualFocus, setIsManualFocus] = useState(false);
 
   const {
@@ -106,7 +104,6 @@ export const InputForm: FC<InputFormProps> = (props) => {
   return (
     <form
       {...rest}
-      ref={formRef}
       className={cn(styles.element, "group", className)}
       onSubmit={submitHandler}
       aria-label={label}

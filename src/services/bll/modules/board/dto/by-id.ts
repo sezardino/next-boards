@@ -19,11 +19,16 @@ const boardSchema = z.object({
       tasks: z.array(
         z.object({
           id: z.string(),
-          title: z.string(),
-          order: z.number(),
-          columnId: z.string(),
         })
       ),
+    })
+  ),
+  tasks: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      order: z.number(),
+      columnId: z.string(),
     })
   ),
 });

@@ -10,6 +10,7 @@ import {
 import {
   DndContext,
   DragEndEvent,
+  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   closestCenter,
@@ -34,18 +35,12 @@ import {
   UpdateTaskResponse,
 } from "@/services/bll/modules/task/dto";
 import { ActionProp, DataProp } from "@/types";
-import {
-  SortableContext,
-  arrayMove,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import clsx from "clsx";
 import { createPortal } from "react-dom";
 import styles from "./BoardScreen.module.scss";
 
 export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
-  // temp
-  boardId: string;
   board: DataProp<Board>;
   addColumnAction: ActionProp<string, AddColumnResponse>;
   addTaskAction: ActionProp<Omit<AddTaskDto, "boardId">, AddTaskResponse>;
@@ -59,12 +54,13 @@ export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
   >;
 };
 
-type DraggableColumn = Board["columns"][number];
-type DraggableTask = Board["columns"][number]["tasks"][number];
+export type DraggableTask = Board["tasks"][number];
+export type DraggableColumn = Omit<Board["columns"][number], "tasks"> & {
+  tasks: DraggableTask[];
+};
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
   const {
-    boardId,
     board,
     addColumnAction,
     addTaskAction,
@@ -73,7 +69,23 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     className,
     ...rest
   } = props;
-  const [columns, setColumns, { columnIds }] = useBoard(board.data);
+
+  const {
+    formattedColumns,
+    // columns
+    columns,
+    columnIds,
+    setColumns,
+    addColumn,
+    updateColumnTitle,
+    updateColumnOrder,
+    // tasks
+    tasks,
+    addTask,
+    updateTaskTitle,
+    updateTaskColumn,
+    updateTaskOrder,
+  } = useBoard(board.data);
 
   const [draggableColumn, setDraggableColumn] =
     useState<DraggableColumn | null>(null);
@@ -81,132 +93,132 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     null
   );
 
-  const addColumnHandler = (title: string) => {
-    setColumns((prev) => [
-      ...prev,
-      {
-        id: new Date().toString(),
-        title,
-        tasks: [],
-        order: prev.length,
-      },
-    ]);
-    addColumnAction.action(title);
-  };
+  const addColumnHandler = useCallback(
+    (title: string) => {
+      const hasSameColumnTitle = columns.some(
+        (c) => c.title.trim().toLocaleUpperCase() === title.trim().toLowerCase()
+      );
 
-  const updateColumnHandler = (id: string, title: string) => {
-    const neededColumn = columns.find((column) => column.id === id);
+      if (hasSameColumnTitle) return;
 
-    if (!neededColumn) return;
-    if (neededColumn.title === title) return;
+      addColumn(title);
+      addColumnAction.action(title);
+    },
+    [addColumnAction, columns, addColumn]
+  );
 
-    setColumns((prev) =>
-      prev.map((column) => (column.id === id ? { ...column, title } : column))
-    );
-    updateColumnAction.action({ columnId: id, title });
-  };
+  const addTaskHandler = useCallback(
+    (title: string, columnId: string) => {
+      const neededColumn = columns.find((column) => column.id === columnId);
 
-  const addTaskHandler = (title: string, columnId: string) => {
-    setColumns((prev) => {
-      const neededColumn = prev.find((column) => column.id === columnId);
+      if (!neededColumn) return;
 
-      if (!neededColumn) return prev;
+      addTask({ title, columnId });
+      addTaskAction.action({ title, columnId: columnId });
+    },
+    [addTaskAction, columns, addTask]
+  );
 
-      const newTask = {
-        id: new Date().toString(),
-        title,
+  const updateColumnHandler = useCallback(
+    (id: string, title: string) => {
+      const neededColumn = columns.find((column) => column.id === id);
+
+      if (!neededColumn) return;
+      if (neededColumn.title === title) return;
+
+      updateColumnTitle({ columnId: id, title });
+      updateColumnAction.action({ columnId: id, title });
+    },
+    [columns, updateColumnAction, updateColumnTitle]
+  );
+
+  const updateTaskHandler = useCallback(
+    (taskId: string, title: string) => {
+      const neededTask = tasks.find((task) => task.id === taskId);
+
+      if (!neededTask) return;
+      if (neededTask.title === title) return;
+
+      updateTaskTitle({ taskId, title });
+      updateTaskAction.action({ taskId, title });
+    },
+    [tasks, updateTaskAction, updateTaskTitle]
+  );
+
+  const changeColumnOrderHandler = useCallback(
+    (columnId: string, newColumnId: string) => {
+      const oldIndex = columnIds.findIndex((column) => column === columnId);
+      const newIndex = columnIds.findIndex((column) => column === newColumnId);
+
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      const newOrder = updateColumnOrder({ columnId, newColumnId });
+
+      updateColumnAction.action({
         columnId,
-        order: neededColumn.tasks.length,
-      };
-
-      return prev.map((c) => {
-        if (c.id !== columnId) return c;
-
-        return {
-          ...c,
-          tasks: [...c.tasks, newTask],
-        };
+        order: newOrder,
       });
-    });
-
-    addTaskAction.action({ title, columnId: columnId });
-  };
-
-  const updateTaskHandler = (id: string, title: string) => {
-    updateTaskAction.action({ taskId: id, title });
-  };
+    },
+    [columnIds, updateColumnAction, updateColumnOrder]
+  );
 
   const dragEndHandler = useCallback(
     (event: DragEndEvent) => {
-      setDraggableColumn(null);
-      setDraggableTask(null);
       const { over, active } = event;
 
       if (!active) return;
       if (!over) return;
       if (over.id === active.id) return;
       if (!active.data.current) return;
+      if (!over.data.current) return;
 
-      const contextData = active.data.current;
+      const overData = over.data.current;
+      const activeData = active.data.current;
 
-      const isColumn = "column" in contextData;
-      const isTask = "task" in contextData;
+      const isActiveColumn = "column" in activeData;
+      const isActiveTask = "task" in activeData;
 
-      if (isColumn) {
-        const oldIndex = columnIds.findIndex((column) => column === active.id);
-        const newIndex = columnIds.findIndex((column) => column === over.id);
+      const isOverColumn = "column" in overData;
+      const isOverTask = "task" in overData;
 
-        const newOrder = arrayMove(columnIds, oldIndex, newIndex);
-
-        setColumns((prev) => arrayMove(prev, oldIndex, newIndex));
-
-        updateColumnAction.action({
-          columnId: active.id.toString(),
-          order: newOrder,
-        });
+      // columns
+      // column drop on column
+      if (isActiveColumn && isOverColumn) {
+        changeColumnOrderHandler(active.id.toString(), over.id.toString());
       }
 
-      if (isTask) {
-        const isInSameColumn = over.id === contextData.task.columnId;
+      // task drop on task
+      if (isActiveTask && isOverTask) {
+        const isSameColumn =
+          draggableTask?.columnId === over.data.current?.task.columnId;
 
-        if (isInSameColumn) return;
-
-        const neededTask = columns
-          .find((column) => column.id === contextData.task.columnId)
-          ?.tasks.find((task) => task.id === active.id);
-
-        if (!neededTask) return;
-
-        setColumns((prev) => {
-          const newColumns = prev.map((column) => {
-            if (column.id === over.id) {
-              return {
-                ...column,
-                tasks: [
-                  ...column.tasks,
-                  { ...neededTask, order: column.tasks.length },
-                ],
-              };
-            }
-
-            return {
-              ...column,
-              tasks: column.tasks
-                .filter((task) => task.id !== active.id)
-                .map((task, index) => ({ ...task, order: index })),
-            };
+        if (isSameColumn) {
+          const newOrder = updateTaskOrder({
+            taskId: active.id.toString(),
+            newTaskId: over.id.toString(),
           });
 
-          return newColumns;
-        });
+          if (!newOrder) return;
 
-        updateTaskAction.action({
-          newColumnId: over.id.toString(),
-          taskId: active.id.toString(),
-        });
+          updateTaskAction.action({
+            taskId: active.id.toString(),
+            order: newOrder,
+          });
+
+          return;
+        } else if (!isSameColumn) {
+          console.log("task drop on task");
+          updateTaskAction.action({
+            taskId: active.id.toString(),
+            newColumnId: over.data.current.task.columnId,
+          });
+        }
       }
+
+      setDraggableColumn(null);
+      setDraggableTask(null);
     },
-    [columnIds, columns, setColumns, updateColumnAction, updateTaskAction]
+    [changeColumnOrderHandler, draggableTask, updateTaskAction, updateTaskOrder]
   );
 
   const dragStartHandler = useCallback((event: DragStartEvent) => {
@@ -230,64 +242,142 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     }
   }, []);
 
+  const dragOverHandler = useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
+
+      if (!active) return;
+      if (!over) return;
+      if (!active.data.current) return;
+      if (!over.data.current) return;
+
+      const overData = over.data.current;
+      const activeData = active.data.current;
+
+      const isOverTask = "task" in overData;
+      const isOverColumn = "column" in overData;
+
+      const isActiveTask = "task" in activeData;
+
+      if (isActiveTask && isOverColumn) {
+        const isSameColumn = activeData.task.columnId === overData.column.id;
+
+        if (isSameColumn) return;
+
+        updateTaskColumn({
+          taskId: active.id.toString(),
+          newColumnId: over.id.toString(),
+        });
+      }
+
+      if (isOverTask && isActiveTask) {
+        const isSameColumn =
+          over.data.current.task.columnId === active.data.current.task.columnId;
+
+        if (isSameColumn) return;
+
+        setColumns((prev) => {
+          return prev.map((column) => {
+            if (
+              active.data.current &&
+              column.id === active.data.current.task.columnId
+            ) {
+              return {
+                ...column,
+                tasks: column.tasks
+                  .filter((task) => task.id !== active.id)
+                  .map((task, index) => ({ ...task, order: index })),
+              };
+            }
+
+            if (
+              over.data.current &&
+              active.data.current &&
+              column.id === over.data.current.task.columnId
+            ) {
+              const tasks = [
+                ...column.tasks,
+                { ...active.data.current.task, order: column.tasks.length },
+              ];
+
+              const newIndex = tasks.findIndex((task) => task.id === over.id);
+
+              return {
+                ...column,
+                tasks: arrayMove(tasks, newIndex, tasks.length - 1).map(
+                  (task, index) => ({ ...task, order: index })
+                ),
+              };
+            }
+
+            return column;
+          });
+        });
+      }
+    },
+    [setColumns, updateTaskColumn]
+  );
+
   return (
     <>
       <section {...rest} className={clsx(styles.element, className)}>
-        <Heading
-          title={{ tag: "h1", text: `BoardPage ${boardId}` }}
-          withDivider
-        />
+        <Heading title={{ tag: "h1", text: "BoardPage" }} withDivider />
 
         <DndContext
           onDragEnd={dragEndHandler}
           onDragStart={dragStartHandler}
+          onDragOver={dragOverHandler}
           collisionDetection={closestCenter}
         >
           <ul className={styles.columns}>
-            <SortableContext
-              items={columnIds}
-              strategy={horizontalListSortingStrategy}
-            >
-              {columns.map((column) => (
+            <SortableContext items={columnIds}>
+              {formattedColumns.map((column) => (
                 <Sortable
                   key={`${column.id}-${column.title}`}
                   id={column.id}
                   data={{ column }}
                 >
-                  {({ setNodeRef, attributes, listeners, isDragging }) => (
-                    <BoardColumn
-                      ref={setNodeRef}
-                      {...attributes}
-                      column={column}
-                      isDragging={isDragging}
-                      columnsLength={columns.length || 0}
-                      dndListeners={listeners}
-                      onAddTask={async (title) =>
-                        addTaskHandler(title, column.id)
-                      }
-                      onUpdateTask={async (id, title) =>
-                        updateTaskHandler(id, title)
-                      }
-                      onUpdateColumn={async (title) =>
-                        updateColumnHandler(column.id, title)
-                      }
-                      className={clsx(styles.column, isDragging && "z-50")}
-                    />
+                  {({
+                    setNodeRef,
+                    attributes,
+                    listeners,
+                    isDragging,
+                    style,
+                  }) => (
+                    <li ref={setNodeRef} {...attributes} style={style}>
+                      <BoardColumn
+                        column={column}
+                        isDragging={isDragging}
+                        columnsLength={columns.length || 0}
+                        dndListeners={listeners}
+                        onAddTask={async (title) =>
+                          addTaskHandler(title, column.id)
+                        }
+                        onUpdateTask={async (id, title) =>
+                          updateTaskHandler(id, title)
+                        }
+                        onUpdateColumn={async (title) =>
+                          updateColumnHandler(column.id, title)
+                        }
+                        className={clsx(styles.column, isDragging && "z-50")}
+                      />
+                    </li>
                   )}
                 </Sortable>
               ))}
-              <li className={styles.column}>
-                <InputForm
-                  label="Create column"
-                  placeholder="Create column"
-                  cancel="Cancel column creation"
-                  submit="Create column"
-                  isPending={addColumnAction.isPending}
-                  onFormSubmit={async (value) => addColumnHandler(value)}
-                />
-              </li>
             </SortableContext>
+            <li className={styles.column}>
+              <InputForm
+                label="Create column"
+                placeholder="Create column"
+                cancel="Cancel column creation"
+                submit="Create column"
+                isPending={addColumnAction.isPending}
+                onFormSubmit={async (value) => addColumnHandler(value)}
+              />
+            </li>
           </ul>
+
           {typeof window !== "undefined" &&
             createPortal(
               <DragOverlay>
@@ -300,9 +390,9 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
                 )}
                 {draggableTask && (
                   <ColumnTask
-                    title={draggableTask.title}
+                    task={draggableTask}
                     isPending={false}
-                    isDragging
+                    isPlaceholder
                   />
                 )}
               </DragOverlay>,

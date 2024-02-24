@@ -54,12 +54,23 @@ export class TaskBllModule extends BllModule {
 
     if (!neededTask) this.throw(UpdateTaskError.WrongData);
 
+    const updatedTask = await this.prismaService.task.update({
+      where: { id: dto.taskId, boardId: dto.boardId },
+      data: {
+        title: dto.title,
+        column: dto.newColumnId
+          ? { connect: { id: dto.newColumnId } }
+          : undefined,
+      },
+      select: { id: true, title: true, order: true },
+    });
+
     if (dto.order && !dto.newColumnId) {
       await this.prismaService.$transaction(
-        dto.order.map((column, index) =>
+        dto.order.map((taskId, index) =>
           this.prismaService.task.update({
             where: {
-              id: column,
+              id: taskId,
               columnId: neededTask.columnId,
               boardId: dto.boardId,
             },
@@ -69,31 +80,21 @@ export class TaskBllModule extends BllModule {
       );
     }
 
-    const updatedTask = await this.prismaService.task.update({
-      where: { id: dto.taskId, boardId: dto.boardId },
-      data: {
-        title: dto.title,
-        column: { connect: { id: dto.newColumnId } },
-        order: neededBoard.columns.find(
-          (column) => column.id === dto.newColumnId
-        )?._count.tasks,
-      },
-      select: { id: true, title: true, order: true },
-    });
+    if (dto.newColumnId) {
+      const oldColumnsTasksWithoutUpdated =
+        neededBoard.columns
+          .find((c) => c.id === neededTask.columnId)
+          ?.tasks.filter((t) => t.id !== dto.taskId) || [];
 
-    const oldColumnsTasksWithoutUpdated =
-      neededBoard.columns
-        .find((c) => c.id === neededTask.columnId)
-        ?.tasks.filter((t) => t.id !== dto.taskId) || [];
-
-    await this.prismaService.$transaction(
-      oldColumnsTasksWithoutUpdated.map((task, index) =>
-        this.prismaService.task.update({
-          where: { id: task.id },
-          data: { order: index },
-        })
-      )
-    );
+      await this.prismaService.$transaction(
+        oldColumnsTasksWithoutUpdated.map((task, index) =>
+          this.prismaService.task.update({
+            where: { id: task.id },
+            data: { order: index },
+          })
+        )
+      );
+    }
 
     return updatedTask;
   }

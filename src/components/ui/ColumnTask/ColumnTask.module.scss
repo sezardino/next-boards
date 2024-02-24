@@ -1,5 +1,9 @@
 .element {
   @apply overflow-visible;
+
+  &.dragging {
+    @apply opacity-60;
+  }
 }
 
 .header {

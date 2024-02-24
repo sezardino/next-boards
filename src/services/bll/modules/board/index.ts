@@ -45,10 +45,14 @@ export class BoardBllModule extends BllModule {
             title: true,
             order: true,
             tasks: {
-              select: { id: true, title: true, columnId: true, order: true },
+              select: { id: true, title: true },
               orderBy: { order: "asc" },
             },
           },
+          orderBy: { order: "asc" },
+        },
+        tasks: {
+          select: { id: true, title: true, columnId: true, order: true },
           orderBy: { order: "asc" },
         },
       },
