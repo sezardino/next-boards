@@ -25,6 +25,7 @@ export class TaskBllModule extends BllModule {
         order: neededBoard._count.tasks,
         board: { connect: { id: dto.boardId } },
         column: { connect: { id: dto.columnId } },
+        user: { connect: { id: userId } },
       },
       select: { id: true, title: true, order: true, priority: true },
     });

@@ -20,6 +20,7 @@ export class ColumnBllModule extends BllModule {
         title: dto.title,
         order: neededBoard._count.columns,
         board: { connect: { id: dto.boardId } },
+        user: { connect: { id: userId } },
       },
       select: { id: true, title: true, order: true },
     });
