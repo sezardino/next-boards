@@ -22,7 +22,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import clsx from "clsx";
 import { createPortal } from "react-dom";
 import { Sortable } from "../../dnd/Sortable";
-import { DndColumn } from "../DndColumn/DndColumn";
+import { KanbanColumn } from "../KanbanColumn/KanbanColumn";
 import styles from "./KanbanView.module.scss";
 
 export interface KanbanViewProps extends ComponentPropsWithoutRef<"ul"> {
@@ -227,7 +227,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                     style={style}
                     className={styles.item}
                   >
-                    <DndColumn
+                    <KanbanColumn
                       as="div"
                       isDragging={isDragging}
                       dndListeners={listeners}
@@ -307,7 +307,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
         createPortal(
           <DragOverlay>
             {draggableColumn && (
-              <DndColumn
+              <KanbanColumn
                 items={draggableColumn.tasks}
                 header={
                   <InputForm

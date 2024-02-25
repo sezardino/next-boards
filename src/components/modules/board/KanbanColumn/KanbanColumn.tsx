@@ -11,7 +11,7 @@ import {
   ScrollShadow,
 } from "@nextui-org/react";
 import clsx from "clsx";
-import styles from "./DndColumn.module.scss";
+import styles from "./KanbanColumn.module.scss";
 
 type Props<T extends { id: string }> = {
   isDragging?: boolean;
@@ -22,10 +22,10 @@ type Props<T extends { id: string }> = {
   dndListeners?: SyntheticListenerMap;
 };
 
-export type DndColumnProps<T extends { id: string }> = CardProps & Props<T>;
+export type KanbanColumnProps<T extends { id: string }> = CardProps & Props<T>;
 
-export const DndColumn = <T extends { id: string }>(
-  props: DndColumnProps<T>
+export const KanbanColumn = <T extends { id: string }>(
+  props: KanbanColumnProps<T>
 ) => {
   const {
     isDragging,
