@@ -1,7 +1,9 @@
+import { useWatchEffect } from "@/hooks/use-watch-effect";
 import { Board } from "@/services/bll/modules/board/dto";
+import { UpdateColumnDto } from "@/services/bll/modules/column/dto";
+import { AddTaskDto, UpdateTaskDto } from "@/services/bll/modules/task/dto";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useCallback, useMemo, useState } from "react";
-import { useWatchEffect } from "./use-watch-effect";
 
 const createBlankColumn = (title: string, order: number) => ({
   id: new Date().toString(),
@@ -21,9 +23,26 @@ type FormattedBoardColumn = Omit<Board["columns"][number], "tasks"> & {
   tasks: Board["tasks"];
 };
 
-export const useBoard = (board?: Board) => {
-  const [columns, setColumns] = useState(board?.columns || []);
-  const [tasks, setTasks] = useState(board?.tasks || []);
+type UseBoardScreen = {
+  columns?: Board["columns"];
+  tasks?: Board["tasks"];
+  onUpdateColumn: (title: Omit<UpdateColumnDto, "boardId">) => void;
+  onUpdateTask: (dto: Omit<UpdateTaskDto, "boardId">) => void;
+  onAddColumn: (title: string) => void;
+  onAddTask: (dto: Omit<AddTaskDto, "boardId">) => void;
+};
+
+export const useBoardScreen = (args: UseBoardScreen) => {
+  const {
+    columns: columnsData,
+    tasks: tasksData,
+    onUpdateColumn,
+    onUpdateTask,
+    onAddColumn,
+    onAddTask,
+  } = args;
+  const [columns, setColumns] = useState(columnsData || []);
+  const [tasks, setTasks] = useState(tasksData || []);
 
   const columnIds = useMemo(
     () => columns.map((column) => column.id),
@@ -45,30 +64,54 @@ export const useBoard = (board?: Board) => {
   }, [columns, tasks]);
 
   useWatchEffect(() => {
-    if (!board) return;
+    if (typeof columnsData === "undefined") return;
 
-    setColumns(board.columns);
-    setTasks(board.tasks);
-  }, [board?.columns]);
+    setColumns(columnsData);
+  }, [columnsData]);
+
+  useWatchEffect(() => {
+    if (typeof tasksData === "undefined") return;
+
+    setTasks(tasksData);
+  }, [tasksData]);
 
   // columns
   const addColumn = useCallback(
-    (title: string) =>
-      setColumns((prev) => [...prev, createBlankColumn(title, columns.length)]),
-    [columns.length]
+    (title: string) => {
+      const hasSameColumnTitle = columns.some(
+        (c) => c.title.trim().toLocaleUpperCase() === title.trim().toLowerCase()
+      );
+
+      if (hasSameColumnTitle) return;
+
+      // UI
+      setColumns((prev) => [...prev, createBlankColumn(title, columns.length)]);
+
+      // API
+      onAddColumn(title);
+    },
+    [columns, onAddColumn]
   );
 
   const updateColumnTitle = useCallback(
     (dto: { columnId: string; title: string }) => {
       const { columnId, title } = dto;
+      const neededColumn = columns.find((column) => column.id === columnId);
 
+      if (!neededColumn) return;
+      if (neededColumn.title === title) return;
+
+      // UI
       setColumns((prev) =>
         prev.map((column) =>
           column.id === columnId ? { ...column, title } : column
         )
       );
+
+      // API
+      onUpdateColumn({ columnId, title });
     },
-    []
+    [columns, onUpdateColumn]
   );
 
   const updateColumnOrder = useCallback(
@@ -84,9 +127,9 @@ export const useBoard = (board?: Board) => {
 
       setColumns((prev) => arrayMove(prev, oldIndex, newIndex));
 
-      return newOrder;
+      onUpdateColumn({ columnId, order: newOrder });
     },
-    [columnIds, setColumns]
+    [columnIds, onUpdateColumn]
   );
 
   // tasks
@@ -104,6 +147,7 @@ export const useBoard = (board?: Board) => {
         neededColumn.tasks.length
       );
 
+      // UI
       setColumns((prev) =>
         prev.map((c) =>
           c.id === columnId
@@ -111,19 +155,30 @@ export const useBoard = (board?: Board) => {
             : c
         )
       );
-
       setTasks((prev) => [...prev, newTask]);
+
+      // API
+      onAddTask({ title, columnId });
     },
-    [columns]
+    [columns, onAddTask]
   );
 
   const updateTaskTitle = useCallback(
     (dto: { taskId: string; title: string }) => {
       const { taskId, title } = dto;
 
+      const neededTask = tasks.find((task) => task.id === taskId);
+
+      if (!neededTask) return;
+      if (neededTask.title === title) return;
+
+      // UI
       setTasks((prev) =>
         prev.map((task) => (task.id === taskId ? { ...task, title } : task))
       );
+
+      // API
+      onUpdateTask({ taskId, title });
     },
     []
   );
@@ -209,8 +264,8 @@ export const useBoard = (board?: Board) => {
   );
 
   const updateTaskOrder = useCallback(
-    (dto: { taskId: string; newTaskId: string }) => {
-      const { taskId, newTaskId } = dto;
+    (dto: { taskId: string; newTaskId: string; newColumnId?: string }) => {
+      const { taskId, newTaskId, newColumnId } = dto;
       const neededColumn = columns.find((column) => {
         return (
           column.tasks.find((task) => task.id === taskId) &&
@@ -227,6 +282,7 @@ export const useBoard = (board?: Board) => {
         (task) => task.id === newTaskId
       );
 
+      // UI
       setColumns((prev) =>
         prev.map((column) => {
           if (column.id !== neededColumn.id) return column;
@@ -257,9 +313,9 @@ export const useBoard = (board?: Board) => {
         })
       );
 
-      return newColumnOrderIds;
+      onUpdateTask({ taskId, order: newColumnOrderIds, newColumnId });
     },
-    [columns]
+    [columns, onUpdateTask]
   );
 
   return {

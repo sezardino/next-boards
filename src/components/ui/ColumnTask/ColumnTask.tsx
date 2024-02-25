@@ -10,7 +10,7 @@ import styles from "./ColumnTask.module.scss";
 
 type Props = {
   task: DraggableTask;
-  onUpdateTitle?: (title: string) => Promise<any>;
+  onUpdateTitle?: (title: string) => void;
   dndListeners?: SyntheticListenerMap;
   isDragging?: boolean;
   isPlaceholder?: boolean;

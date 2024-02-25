@@ -27,17 +27,17 @@ import styles from "./KanbanView.module.scss";
 
 export interface KanbanViewProps extends ComponentPropsWithoutRef<"ul"> {
   columns: DraggableColumn[];
-  onAddTask: (dto: { title: string; columnId: string }) => Promise<any>;
-  onAddColumn: (title: string) => Promise<any>;
-  onUpdateTaskTitle: (dto: { taskId: string; title: string }) => Promise<any>;
-  onUpdateColumnTitle: (dto: {
-    columnId: string;
-    title: string;
-  }) => Promise<any>;
+  onAddTask: (dto: { title: string; columnId: string }) => void;
+  onAddColumn: (title: string) => void;
+  onUpdateTaskTitle: (dto: { taskId: string; title: string }) => void;
+  onUpdateColumnTitle: (dto: { columnId: string; title: string }) => void;
   // dnd
-  onChangeColumnOrder: (dto: { columnId: string; newColumnId: string }) => void;
+  onColumnDropOnColumn: (dto: {
+    columnId: string;
+    newColumnId: string;
+  }) => void;
   onChangeTaskColumn: (dto: { taskId: string; newColumnId: string }) => void;
-  onChangeTaskOrderInSameColumn: (dto: {
+  onDropTaskOnTaskInSameColumn: (dto: {
     taskId: string;
     newTaskId: string;
   }) => void;
@@ -56,9 +56,9 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
     onAddColumn,
     onUpdateTaskTitle,
     onUpdateColumnTitle,
-    onChangeColumnOrder,
+    onColumnDropOnColumn,
     onChangeTaskColumn,
-    onChangeTaskOrderInSameColumn,
+    onDropTaskOnTaskInSameColumn,
     onChangeTaskOrderInOtherColumns,
     onOverTaskOnColumn,
     className,
@@ -117,7 +117,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
         const columnId = active.id.toString();
         const newColumnId = over.id.toString();
 
-        onChangeColumnOrder({ columnId, newColumnId });
+        onColumnDropOnColumn({ columnId, newColumnId });
       }
 
       if (isActiveTask && isOverColumn) {
@@ -136,7 +136,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
 
         if (isSameColumn) {
           console.log("task drop on task in same column");
-          onChangeTaskOrderInSameColumn({
+          onDropTaskOnTaskInSameColumn({
             taskId: active.id.toString(),
             newTaskId: over.id.toString(),
           });
@@ -155,10 +155,10 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
     },
     [
       draggableTask?.columnId,
-      onChangeColumnOrder,
+      onColumnDropOnColumn,
       onChangeTaskColumn,
       onChangeTaskOrderInOtherColumns,
-      onChangeTaskOrderInSameColumn,
+      onDropTaskOnTaskInSameColumn,
     ]
   );
 
