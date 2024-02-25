@@ -1,7 +1,21 @@
 .element {
-  @apply h-full;
+  @apply h-full grid grid-cols-1 grid-rows-[auto,1fr] gap-4;
+}
 
-  position: relative;
+.board {
+  @apply relative h-full;
+}
+
+.header {
+  @apply flex items-center gap-2;
+}
+
+.tabs {
+  @apply -order-1;
+}
+
+.tab {
+  @apply flex items-center gap-1;
 }
 
 .kanban {

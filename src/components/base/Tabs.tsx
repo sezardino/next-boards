@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 
 export type TabItem<T extends string> = {
   id: T;
-  title: string;
+  title: string | JSX.Element;
   href?: string;
   disabled?: boolean;
 };
@@ -24,21 +24,27 @@ type Props<T extends string> = {
 
 type OmittedTabProps = Omit<
   NextUITabsProps,
-  "items" | "variant" | "aria-label" | "selectedKey" | "onSelectionChange"
+  "items" | "aria-label" | "selectedKey" | "onSelectionChange"
 >;
 
 export type TabProps<T extends string> = OmittedTabProps & Props<T>;
 
 export const Tabs = <T extends string>(props: TabProps<T>) => {
-  const { onSelectedChange, selected, items, title, className, ...rest } =
-    props;
+  const {
+    onSelectedChange,
+    variant = "bordered",
+    selected,
+    items,
+    title,
+    ...rest
+  } = props;
 
   const pathname = usePathname();
 
   return (
     <NextUITabs
       {...rest}
-      variant="bordered"
+      variant={variant}
       selectedKey={selected && onSelectedChange ? selected : pathname}
       onSelectionChange={
         selected && onSelectedChange

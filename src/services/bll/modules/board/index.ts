@@ -39,6 +39,7 @@ export class BoardBllModule extends BllModule {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: id, userId, status: EntityStatus.ACTIVE },
       select: {
+        title: true,
         columns: {
           select: {
             id: true,

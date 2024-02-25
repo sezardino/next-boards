@@ -111,7 +111,6 @@ export class TaskBllModule extends BllModule {
     order: string[];
     taskId: string;
   }) {
-    console.log("here");
     const { oldColumnId, newColumnId, order, taskId } = dto;
 
     // update order in new column

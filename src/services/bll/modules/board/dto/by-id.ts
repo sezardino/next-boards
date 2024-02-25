@@ -11,6 +11,7 @@ export enum BoardError {
 }
 
 const boardSchema = z.object({
+  title: z.string(),
   columns: z.array(
     z.object({
       id: z.string(),

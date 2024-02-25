@@ -27,10 +27,13 @@ import styles from "./KanbanView.module.scss";
 
 export interface KanbanViewProps extends ComponentPropsWithoutRef<"ul"> {
   columns: DraggableColumn[];
-  onAddTask: (title: string, columnId: string) => Promise<any>;
+  onAddTask: (dto: { title: string; columnId: string }) => Promise<any>;
   onAddColumn: (title: string) => Promise<any>;
-  onUpdateTaskTitle: (id: string, title: string) => Promise<any>;
-  onUpdateColumnTitle: (id: string, title: string) => Promise<any>;
+  onUpdateTaskTitle: (dto: { taskId: string; title: string }) => Promise<any>;
+  onUpdateColumnTitle: (dto: {
+    columnId: string;
+    title: string;
+  }) => Promise<any>;
   // dnd
   onChangeColumnOrder: (dto: { columnId: string; newColumnId: string }) => void;
   onChangeTaskColumn: (dto: { taskId: string; newColumnId: string }) => void;
@@ -238,7 +241,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                           initialValue={column.title}
                           disabled={isDragging}
                           onFormSubmit={async (title) =>
-                            onUpdateColumnTitle(column.id, title)
+                            onUpdateColumnTitle({ columnId: column.id, title })
                           }
                         />
                       }
@@ -251,7 +254,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                           disabled={isDragging}
                           className={styles.form}
                           onFormSubmit={async (title) =>
-                            onAddTask(title, column.id)
+                            onAddTask({ title, columnId: column.id })
                           }
                         />
                       }
@@ -273,7 +276,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                                 task={task}
                                 isDragging={isDragging || isTaskDragging}
                                 onUpdateTitle={(title) =>
-                                  onUpdateTaskTitle(title, column.id)
+                                  onUpdateTaskTitle({ taskId: task.id, title })
                                 }
                                 dndListeners={listeners}
                               />
