@@ -6,7 +6,7 @@ import { DraggableTask } from "@/components/screens/Board/BoardScreen";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Card, CardHeader, CardProps } from "@nextui-org/react";
 import clsx from "clsx";
-import styles from "./ColumnTask.module.scss";
+import styles from "./KanbanItem.module.scss";
 
 type Props = {
   task: DraggableTask;
@@ -16,9 +16,9 @@ type Props = {
   isPlaceholder?: boolean;
 };
 
-export type ColumnTaskProps = CardProps & Props;
+export type KanbanItemProps = CardProps & Props;
 
-export const ColumnTask: FC<ColumnTaskProps> = (props) => {
+export const KanbanItem: FC<KanbanItemProps> = (props) => {
   const {
     task,
     isPlaceholder,

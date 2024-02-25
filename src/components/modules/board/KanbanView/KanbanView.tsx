@@ -6,11 +6,11 @@ import {
 } from "react";
 
 import { InputForm } from "@/components/base/InputForm/InputForm";
+import { KanbanItem } from "@/components/modules/board/KanbanItem/KanbanItem";
 import {
   DraggableColumn,
   DraggableTask,
 } from "@/components/screens/Board/BoardScreen";
-import { ColumnTask } from "@/components/ui/ColumnTask/ColumnTask";
 import {
   DndContext,
   DragEndEvent,
@@ -272,7 +272,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                             isDragging: isTaskDragging,
                           }) => (
                             <li ref={setNodeRef} {...attributes} style={style}>
-                              <ColumnTask
+                              <KanbanItem
                                 task={task}
                                 isDragging={isDragging || isTaskDragging}
                                 onUpdateTitle={(title) =>
@@ -333,7 +333,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                 }
                 itemRenderFun={(task) => (
                   <li>
-                    <ColumnTask
+                    <KanbanItem
                       task={task}
                       isDragging={true}
                       onUpdateTitle={async (title) => {}}
@@ -342,7 +342,7 @@ export const KanbanView: FC<KanbanViewProps> = (props) => {
                 )}
               />
             )}
-            {draggableTask && <ColumnTask task={draggableTask} isPlaceholder />}
+            {draggableTask && <KanbanItem task={draggableTask} isPlaceholder />}
           </DragOverlay>,
           document.body
         )}
