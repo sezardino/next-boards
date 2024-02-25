@@ -111,14 +111,18 @@ export class TaskBllModule extends BllModule {
     order: string[];
     taskId: string;
   }) {
+    console.log("here");
     const { oldColumnId, newColumnId, order, taskId } = dto;
 
     // update order in new column
     await this.prismaService.$transaction(
       order.map((id, index) =>
         this.prismaService.task.update({
-          where: { id, columnId: taskId === id ? newColumnId : undefined },
-          data: { order: index },
+          where: { id },
+          data: {
+            order: index,
+            columnId: taskId === id ? newColumnId : undefined,
+          },
         })
       )
     );
