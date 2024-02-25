@@ -17,6 +17,10 @@ const createBlankTask = (title: string, columnId: string, order: number) => ({
   order,
 });
 
+type FormattedBoardColumn = Omit<Board["columns"][number], "tasks"> & {
+  tasks: Board["tasks"];
+};
+
 export const useBoard = (board?: Board) => {
   const [columns, setColumns] = useState(board?.columns || []);
   const [tasks, setTasks] = useState(board?.tasks || []);
@@ -26,7 +30,7 @@ export const useBoard = (board?: Board) => {
     [columns]
   );
 
-  const formattedColumns = useMemo(() => {
+  const formattedColumns = useMemo<FormattedBoardColumn[]>(() => {
     return (
       columns.map((column) => ({
         ...column,
@@ -73,6 +77,8 @@ export const useBoard = (board?: Board) => {
 
       const oldIndex = columnIds.findIndex((column) => column === columnId);
       const newIndex = columnIds.findIndex((column) => column === newColumnId);
+
+      if (oldIndex === -1 || newIndex === -1) return;
 
       const newOrder = arrayMove(columnIds, oldIndex, newIndex);
 
@@ -161,41 +167,45 @@ export const useBoard = (board?: Board) => {
   );
 
   const updateTaskColumnBaseOnTask = useCallback(
-    (dto: { taskId: string; newColumnId: string }) => {
-      const { taskId, newColumnId } = dto;
+    (dto: { taskId: string; newColumnId: string; newTaskId: string }) => {
+      const { taskId, newColumnId, newTaskId } = dto;
 
-      const neededColumn = columns.find((column) => column.id === newColumnId);
+      const neededTask = tasks.find((task) => task.id === taskId);
 
-      if (!neededColumn) return;
+      if (!neededTask) return;
 
-      setColumns((prev) =>
-        prev.map((column) => {
-          if (column.id === newColumnId)
-            return { ...column, tasks: [...column.tasks, { id: taskId }] };
-
-          if (column.tasks.find((task) => task.id === taskId))
+      setColumns((prev) => {
+        return prev.map((column) => {
+          if (column.id === newColumnId) {
             return {
               ...column,
-              tasks: column.tasks.filter((task) => task.id !== taskId),
+              tasks: column.tasks
+                .filter((task) => task.id !== taskId)
+                .map((task, index) => ({ ...task, order: index })),
             };
+          }
+
+          if (column.id === newTaskId) {
+            const tasks = [
+              ...column.tasks,
+              { ...neededTask, order: column.tasks.length },
+            ];
+
+            const newIndex = tasks.findIndex((task) => task.id === newTaskId);
+
+            return {
+              ...column,
+              tasks: arrayMove(tasks, newIndex, tasks.length - 1).map(
+                (task, index) => ({ ...task, order: index })
+              ),
+            };
+          }
 
           return column;
-        })
-      );
-
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                columnId: newColumnId,
-                order: neededColumn.tasks.length,
-              }
-            : task
-        )
-      );
+        });
+      });
     },
-    [columns]
+    [tasks]
   );
 
   const updateTaskOrder = useCallback(

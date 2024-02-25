@@ -1,15 +1,17 @@
 .element {
-  @apply h-full grid grid-cols-1 grid-rows-[auto,1fr] gap-5;
+  @apply h-full;
+
+  position: relative;
 }
 
-.columns {
-  @apply flex gap-4 overflow-y-auto h-full;
-}
-
-.column {
-  @apply flex-1 min-w-60 max-w-60;
-}
-
-.tasks {
-  @apply mt-4 grid grid-cols-1 gap-4;
+.kanban {
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  user-select: none;
+  white-space: nowrap;
 }

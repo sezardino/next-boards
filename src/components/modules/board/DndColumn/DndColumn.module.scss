@@ -1,0 +1,27 @@
+.element {
+  @apply list-none overflow-visible max-h-full;
+
+  &.dragging {
+    @apply opacity-60;
+  }
+}
+
+.header {
+  @apply grid grid-cols-[1fr,auto] gap-1;
+}
+
+.body {
+  @apply pt-0 pb-6;
+}
+
+.tasks {
+  @apply grid grid-cols-1 gap-2;
+}
+
+.footer {
+  @apply overflow-visible;
+}
+
+.form {
+  @apply w-full;
+}

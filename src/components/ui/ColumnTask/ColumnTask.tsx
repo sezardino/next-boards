@@ -11,7 +11,6 @@ import styles from "./ColumnTask.module.scss";
 type Props = {
   task: DraggableTask;
   onUpdateTitle?: (title: string) => Promise<any>;
-  isPending: boolean;
   dndListeners?: SyntheticListenerMap;
   isDragging?: boolean;
   isPlaceholder?: boolean;
@@ -26,7 +25,6 @@ export const ColumnTask: FC<ColumnTaskProps> = (props) => {
     isDragging,
     dndListeners,
     onUpdateTitle,
-    isPending,
     className,
     ...rest
   } = props;
@@ -43,7 +41,6 @@ export const ColumnTask: FC<ColumnTaskProps> = (props) => {
           cancel="Cancel task name change"
           submit="Change task name"
           initialValue={task.title}
-          isPending={isPending}
           disabled={isDragging || isPlaceholder || !onUpdateTitle}
           onFormSubmit={onUpdateTitle ? onUpdateTitle : () => Promise.resolve()}
         />

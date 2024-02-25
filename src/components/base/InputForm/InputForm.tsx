@@ -23,7 +23,6 @@ type InputFormValues = {
 type Props = {
   initialValue?: string;
   onFormSubmit: (value: string) => Promise<any>;
-  isPending: boolean;
   label: string;
   placeholder: string;
   submit: string;
@@ -43,7 +42,6 @@ export const InputForm: FC<InputFormProps> = (props) => {
     cancel,
     label,
     placeholder,
-    isPending,
     initialValue,
     disabled,
     onFormSubmit,
@@ -99,7 +97,7 @@ export const InputForm: FC<InputFormProps> = (props) => {
     setIsManualFocus(false);
   };
 
-  const isDisabled = isPending || isSubmitting || disabled;
+  const isDisabled = isSubmitting || disabled;
 
   return (
     <form
