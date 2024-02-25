@@ -7,7 +7,7 @@ import { IconNames } from "@/components/base/Icon";
 import { SearchForm } from "@/components/base/SearchForm";
 import { Typography } from "@/components/base/Typography/Typography";
 import { BoardForm, BoardFormValues } from "@/components/forms/Board/BoardForm";
-import { BoardCard } from "@/components/modules/board/BoardCard/BoardCard";
+import { BoardCard } from "@/components/modules/boards/BoardCard/BoardCard";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalWithDescription } from "@/components/ui/ModalWithDescription/ModalWithDescription";
 import { PageUrls } from "@/const";
