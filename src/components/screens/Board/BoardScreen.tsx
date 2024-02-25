@@ -13,7 +13,6 @@ import {
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
-  closestCenter,
 } from "@dnd-kit/core";
 
 import { InputForm } from "@/components/base/InputForm/InputForm";
@@ -83,7 +82,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     tasks,
     addTask,
     updateTaskTitle,
-    updateTaskColumn,
+    updateTaskColumnBaseOnColumn,
     updateTaskOrder,
   } = useBoard(board.data);
 
@@ -187,6 +186,15 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
         changeColumnOrderHandler(active.id.toString(), over.id.toString());
       }
 
+      console.log({ overData, activeData });
+      if (isActiveTask && isOverColumn) {
+        console.log("task drop on column");
+        updateTaskAction.action({
+          taskId: active.id.toString(),
+          newColumnId: over.id.toString(),
+        });
+      }
+
       // task drop on task
       if (isActiveTask && isOverTask) {
         const isSameColumn =
@@ -264,7 +272,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
 
         if (isSameColumn) return;
 
-        updateTaskColumn({
+        updateTaskColumnBaseOnColumn({
           taskId: active.id.toString(),
           newColumnId: over.id.toString(),
         });
@@ -275,7 +283,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
           over.data.current.task.columnId === active.data.current.task.columnId;
 
         if (isSameColumn) return;
-
+        console.log("here");
         setColumns((prev) => {
           return prev.map((column) => {
             if (
@@ -315,7 +323,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
         });
       }
     },
-    [setColumns, updateTaskColumn]
+    [setColumns, updateTaskColumnBaseOnColumn]
   );
 
   return (
@@ -327,7 +335,6 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
           onDragEnd={dragEndHandler}
           onDragStart={dragStartHandler}
           onDragOver={dragOverHandler}
-          collisionDetection={closestCenter}
         >
           <ul className={styles.columns}>
             <SortableContext items={columnIds}>

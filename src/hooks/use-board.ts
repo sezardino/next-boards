@@ -122,7 +122,45 @@ export const useBoard = (board?: Board) => {
     []
   );
 
-  const updateTaskColumn = useCallback(
+  const updateTaskColumnBaseOnColumn = useCallback(
+    (dto: { taskId: string; newColumnId: string }) => {
+      const { taskId, newColumnId } = dto;
+
+      const neededColumn = columns.find((column) => column.id === newColumnId);
+
+      if (!neededColumn) return;
+
+      setColumns((prev) =>
+        prev.map((column) => {
+          if (column.id === newColumnId)
+            return { ...column, tasks: [...column.tasks, { id: taskId }] };
+
+          if (column.tasks.find((task) => task.id === taskId))
+            return {
+              ...column,
+              tasks: column.tasks.filter((task) => task.id !== taskId),
+            };
+
+          return column;
+        })
+      );
+
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                columnId: newColumnId,
+                order: neededColumn.tasks.length,
+              }
+            : task
+        )
+      );
+    },
+    [columns]
+  );
+
+  const updateTaskColumnBaseOnTask = useCallback(
     (dto: { taskId: string; newColumnId: string }) => {
       const { taskId, newColumnId } = dto;
 
@@ -228,7 +266,8 @@ export const useBoard = (board?: Board) => {
     // tasks
     addTask,
     updateTaskTitle,
-    updateTaskColumn,
+    updateTaskColumnBaseOnColumn,
+    updateTaskColumnBaseOnTask,
     updateTaskOrder,
   };
 };
