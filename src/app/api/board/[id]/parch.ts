@@ -7,7 +7,7 @@ import {
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export const patchBoardHandler = async (req: NextRequest) => {
+export const patchArchiveBoardHandler = async (req: NextRequest) => {
   try {
     const dto = (await req.json()) as ArchiveBoardDto;
     const session = await getNextAuthSession();

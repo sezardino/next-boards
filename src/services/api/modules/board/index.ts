@@ -78,7 +78,7 @@ export class BoardApiModule extends AbstractApiModule {
 
   archive(data: ArchiveBoardDto) {
     return this.fetch({
-      endpoint: `board/${data.id}/archive`,
+      endpoint: `board/${data.id}`,
       schema: archiveBoardResponseSchema,
       config: { method: "PATCH", data },
     });

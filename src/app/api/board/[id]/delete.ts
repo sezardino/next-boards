@@ -5,7 +5,7 @@ import { AddTaskResponse } from "@/services/bll/modules/task/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export const deleteBoardTaskHandler = async (req: NextRequest) => {
+export const deleteBoardHandler = async (req: NextRequest) => {
   try {
     const dto = (await req.json()) as DeleteBoardDto;
 

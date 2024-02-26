@@ -117,7 +117,7 @@ export class BoardBllModule extends BllModule {
 
     return this.prismaService.board.update({
       where: { id: dto.id },
-      data: { status: EntityStatus.DELETED },
+      data: { status: EntityStatus.INACTIVE },
     });
   }
 
@@ -137,7 +137,11 @@ export class BoardBllModule extends BllModule {
 
   async baseData(id: string, userId: string) {
     const board = await this.prismaService.board.findUnique({
-      where: { id, userId },
+      where: {
+        id,
+        userId,
+        status: { in: [EntityStatus.ACTIVE, EntityStatus.INACTIVE] },
+      },
       select: {
         id: true,
         title: true,

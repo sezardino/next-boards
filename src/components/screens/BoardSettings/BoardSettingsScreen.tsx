@@ -23,16 +23,16 @@ import styles from "./BoardSettingsScreen.module.scss";
 export type BoardSettingsScreenProps = ComponentPropsWithoutRef<"div"> & {
   board: DataProp<BoardBaseDataResponse>;
   updateBoardAction: ActionProp<BoardFormValues, any>;
-  onDeleteBoard: () => Promise<void>;
-  onArchiveBoard: () => Promise<void>;
+  deleteBoardAction: ActionProp<{}, any>;
+  archiveBoardAction: ActionProp<{}, any>;
 };
 
 export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
   const {
     updateBoardAction,
     board,
-    onArchiveBoard,
-    onDeleteBoard,
+    deleteBoardAction,
+    archiveBoardAction,
     className,
     ...rest
   } = props;
@@ -51,15 +51,15 @@ export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
     async (type: "archive" | "delete") => {
       try {
         if (type === "archive") {
-          await onArchiveBoard();
+          await archiveBoardAction.action({});
           setIsArchiveModalOpen(false);
         } else {
-          await onDeleteBoard();
+          await deleteBoardAction.action({});
           setIsDeleteModalOpen(false);
         }
       } catch (error) {}
     },
-    [onArchiveBoard, onDeleteBoard]
+    [archiveBoardAction, deleteBoardAction]
   );
 
   const dangerZoneItems = useMemo(

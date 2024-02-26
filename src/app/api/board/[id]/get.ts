@@ -6,7 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Params = { params: { id: string } };
 
-export const getBoardHandler = async (_: NextRequest, params: Params) => {
+export const getBoardInformationHandler = async (
+  _: NextRequest,
+  params: Params
+) => {
   try {
     const session = await getNextAuthSession();
 
