@@ -8,6 +8,7 @@ export type ArchiveBoardDto = z.infer<typeof archiveBoardDtoSchema>;
 
 export enum ArchiveBoardError {
   NotFound = "Board not found",
+  BoardArchived = "Already archived",
 }
 
 export const archiveBoardResponseSchema = z.object({

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export enum BoardBaseDataError {
   NotFound = "Board not found",
+  BoardArchived = "Board archived",
 }
 
 export const boardBaseDataResponseSchema = z

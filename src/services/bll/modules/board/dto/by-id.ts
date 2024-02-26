@@ -1,3 +1,4 @@
+import { EntityStatus } from "@prisma/client";
 import { z } from "zod";
 
 export const boardDtoSchema = z.object({
@@ -12,6 +13,7 @@ export enum BoardError {
 
 const boardSchema = z.object({
   title: z.string(),
+  status: z.nativeEnum(EntityStatus),
   columns: z.array(
     z.object({
       id: z.string(),

@@ -37,9 +37,14 @@ export class BoardBllModule extends BllModule {
 
   async board(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id: id, userId, status: EntityStatus.ACTIVE },
+      where: {
+        id: id,
+        userId,
+        status: { in: [EntityStatus.ACTIVE, EntityStatus.INACTIVE] },
+      },
       select: {
         title: true,
+        status: true,
         columns: {
           select: {
             id: true,
@@ -85,10 +90,12 @@ export class BoardBllModule extends BllModule {
   async archive(dto: ArchiveBoardDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
-      select: { id: true },
+      select: { id: true, status: true },
     });
 
     if (!neededBoard) this.throw(ArchiveBoardError.NotFound);
+    if (neededBoard.status === EntityStatus.INACTIVE)
+      this.throw(ArchiveBoardError.BoardArchived);
 
     return this.prismaService.board.update({
       where: { id: dto.id },
@@ -98,7 +105,7 @@ export class BoardBllModule extends BllModule {
 
   async delete(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id, userId, status: EntityStatus.ACTIVE },
+      where: { id, userId },
       select: { id: true },
     });
 
@@ -131,10 +138,13 @@ export class BoardBllModule extends BllModule {
       where: { id: dto.id, userId },
       select: {
         id: true,
+        status: true,
       },
     });
 
     if (!board) this.throw(BoardBaseDataError.NotFound);
+    if (board.status === EntityStatus.INACTIVE)
+      this.throw(BoardBaseDataError.BoardArchived);
 
     return this.prismaService.board.update({
       where: { id: board.id },
