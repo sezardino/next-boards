@@ -12,7 +12,7 @@ export enum ArchiveBoardError {
 }
 
 export const archiveBoardResponseSchema = z.object({
-  error: z.nativeEnum(ArchiveBoardError),
+  error: z.nativeEnum(ArchiveBoardError).optional(),
 });
 
 export type ArchiveBoardResponse = z.infer<typeof archiveBoardResponseSchema>;

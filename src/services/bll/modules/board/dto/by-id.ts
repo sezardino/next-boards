@@ -1,19 +1,16 @@
-import { EntityStatus } from "@prisma/client";
 import { z } from "zod";
 
-export const boardDtoSchema = z.object({
+export const boardViewDtoSchema = z.object({
   id: z.string(),
 });
 
-export type BoardDto = z.infer<typeof boardDtoSchema>;
+export type BoardViewDto = z.infer<typeof boardViewDtoSchema>;
 
-export enum BoardError {
+export enum BoardViewError {
   NotFound = "NotFound",
 }
 
-const boardSchema = z.object({
-  title: z.string(),
-  status: z.nativeEnum(EntityStatus),
+const boardViewSchema = z.object({
   columns: z.array(
     z.object({
       id: z.string(),
@@ -36,10 +33,10 @@ const boardSchema = z.object({
   ),
 });
 
-export type Board = z.infer<typeof boardSchema>;
+export type BoardView = z.infer<typeof boardViewSchema>;
 
-export const boardResponseSchema = boardSchema.or(
-  z.object({ error: z.nativeEnum(BoardError) })
+export const boardViewResponseSchema = boardViewSchema.or(
+  z.object({ error: z.nativeEnum(BoardViewError) })
 );
 
-export type BoardResponse = z.infer<typeof boardResponseSchema>;
+export type BoardViewResponse = z.infer<typeof boardViewResponseSchema>;

@@ -1,11 +1,18 @@
 import {
   AllBoardsDto,
+  ArchiveBoardDto,
   CreateBoardDto,
   allBoardsResponseSchema,
+  archiveBoardResponseSchema,
   boardBaseDataResponseSchema,
-  boardResponseSchema,
+  boardViewResponseSchema,
   createBoardResponseSchema,
 } from "@/services/bll/modules/board/dto";
+import {
+  DeleteBoardDto,
+  deleteBoardResponseSchema,
+} from "@/services/bll/modules/board/dto/delete";
+import { boardInformationResponseSchema } from "@/services/bll/modules/board/dto/information";
 import {
   PatchBoardBaseDataDto,
   patchBaseBoardDataResponseSchema,
@@ -29,10 +36,18 @@ export class BoardApiModule extends AbstractApiModule {
     });
   }
 
-  board(id: string) {
+  information(id: string) {
     return this.fetch({
       endpoint: `board/${id}`,
-      schema: boardResponseSchema,
+      schema: boardInformationResponseSchema,
+      config: { method: "GET" },
+    });
+  }
+
+  view(id: string) {
+    return this.fetch({
+      endpoint: `board/${id}/view`,
+      schema: boardViewResponseSchema,
       config: { method: "GET" },
     });
   }
@@ -49,6 +64,22 @@ export class BoardApiModule extends AbstractApiModule {
     return this.fetch({
       endpoint: `board/${data.id}/base-data`,
       schema: patchBaseBoardDataResponseSchema,
+      config: { method: "PATCH", data },
+    });
+  }
+
+  delete(data: DeleteBoardDto) {
+    return this.fetch({
+      endpoint: `board/${data.id}`,
+      schema: deleteBoardResponseSchema,
+      config: { method: "DELETE", data },
+    });
+  }
+
+  archive(data: ArchiveBoardDto) {
+    return this.fetch({
+      endpoint: `board/${data.id}/archive`,
+      schema: archiveBoardResponseSchema,
       config: { method: "PATCH", data },
     });
   }

@@ -1,5 +1,5 @@
 import { useWatchEffect } from "@/hooks/use-watch-effect";
-import { Board } from "@/services/bll/modules/board/dto";
+import { BoardView } from "@/services/bll/modules/board/dto";
 import { UpdateColumnDto } from "@/services/bll/modules/column/dto";
 import { AddTaskDto, UpdateTaskDto } from "@/services/bll/modules/task/dto";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -19,13 +19,13 @@ const createBlankTask = (title: string, columnId: string, order: number) => ({
   order,
 });
 
-type FormattedBoardColumn = Omit<Board["columns"][number], "tasks"> & {
-  tasks: Board["tasks"];
+type FormattedBoardColumn = Omit<BoardView["columns"][number], "tasks"> & {
+  tasks: BoardView["tasks"];
 };
 
 type UseBoardScreen = {
-  columns?: Board["columns"];
-  tasks?: Board["tasks"];
+  columns?: BoardView["columns"];
+  tasks?: BoardView["tasks"];
   onUpdateColumn: (title: Omit<UpdateColumnDto, "boardId">) => void;
   onUpdateTask: (dto: Omit<UpdateTaskDto, "boardId">) => void;
   onAddColumn: (title: string) => void;
@@ -57,7 +57,7 @@ export const useBoardScreen = (args: UseBoardScreen) => {
           (
             column.tasks
               .map((task) => tasks.find((t) => t.id === task.id))
-              .filter(Boolean) as Board["tasks"][number][]
+              .filter(Boolean) as BoardView["tasks"][number][]
           ).sort((a, b) => a.order - b.order) || [],
       })) || []
     );

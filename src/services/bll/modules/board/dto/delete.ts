@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const deleteBoardDtoSchema = z.object({
+  id: z.string(),
+});
+
+export type DeleteBoardDto = z.infer<typeof deleteBoardDtoSchema>;
+
 export enum DeleteBoardError {
   NotFound = "Board not found",
 }

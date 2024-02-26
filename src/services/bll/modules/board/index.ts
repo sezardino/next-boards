@@ -6,11 +6,11 @@ import {
   ArchiveBoardDto,
   ArchiveBoardError,
   BoardBaseDataError,
-  BoardError,
+  BoardViewError,
   CreateBoardDto,
   CreateBoardError,
 } from "./dto";
-import { DeleteBoardError } from "./dto/delete";
+import { DeleteBoardDto, DeleteBoardError } from "./dto/delete";
 import { PatchBoardBaseDataDto } from "./dto/update-base-data";
 
 export class BoardBllModule extends BllModule {
@@ -33,6 +33,24 @@ export class BoardBllModule extends BllModule {
       },
       orderBy: { updatedAt: "desc" },
     });
+  }
+
+  async information(id: string, userId: string) {
+    const neededBoard = await this.prismaService.board.findUnique({
+      where: {
+        id: id,
+        userId,
+        status: { in: [EntityStatus.ACTIVE, EntityStatus.INACTIVE] },
+      },
+      select: {
+        title: true,
+        status: true,
+      },
+    });
+
+    if (!neededBoard) this.throw(BoardViewError.NotFound);
+
+    return neededBoard;
   }
 
   async board(id: string, userId: string) {
@@ -64,7 +82,7 @@ export class BoardBllModule extends BllModule {
       },
     });
 
-    if (!neededBoard) this.throw(BoardError.NotFound);
+    if (!neededBoard) this.throw(BoardViewError.NotFound);
 
     return neededBoard;
   }
@@ -103,16 +121,16 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async delete(id: string, userId: string) {
+  async delete(dto: DeleteBoardDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
-      where: { id, userId },
+      where: { id: dto.id, userId },
       select: { id: true },
     });
 
     if (!neededBoard) this.throw(DeleteBoardError.NotFound);
 
     return this.prismaService.board.update({
-      where: { id },
+      where: { id: dto.id },
       data: { status: EntityStatus.DELETED },
     });
   }

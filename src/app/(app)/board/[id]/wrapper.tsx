@@ -5,7 +5,8 @@ import { useAddColumnMutation } from "@/hooks/mutations/column/add";
 import { useUpdateColumnMutation } from "@/hooks/mutations/column/update";
 import { useAddTaskMutation } from "@/hooks/mutations/task/add";
 import { useUpdateTaskMutation } from "@/hooks/mutations/task/update";
-import { useBoardQuery } from "@/hooks/queries/boards/board";
+import { useBoardInformationQuery } from "@/hooks/queries/boards/information";
+import { useBoardViewQuery } from "@/hooks/queries/boards/view";
 import { UpdateColumnDto } from "@/services/bll/modules/column/dto";
 import { AddTaskDto, UpdateTaskDto } from "@/services/bll/modules/task/dto";
 import { useCallback } from "react";
@@ -15,7 +16,9 @@ type Props = { params: { id: string } };
 export const BoardPageWrapper = (props: Props) => {
   const { id } = props.params;
 
-  const { data: board, isFetching: isBoardLoading } = useBoardQuery(id);
+  const { data: board, isFetching: isBoardLoading } = useBoardViewQuery(id);
+  const { data: information, isFetching: isInformationLoading } =
+    useBoardInformationQuery(id);
 
   const { mutateAsync: addColumn, isPending: isAddColumnPending } =
     useAddColumnMutation();
@@ -51,10 +54,12 @@ export const BoardPageWrapper = (props: Props) => {
   );
 
   if (board && "error" in board) return null;
+  if (information && "error" in information) return null;
 
   return (
     <BoardScreen
-      board={{ data: board, isLoading: isBoardLoading }}
+      board={{ data: information, isLoading: isInformationLoading }}
+      view={{ data: board, isLoading: isBoardLoading }}
       addColumnAction={{
         action: addColumnHelper,
         isPending: isAddColumnPending,

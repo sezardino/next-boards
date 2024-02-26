@@ -1,6 +1,6 @@
 import { getNextAuthSession } from "@/lib/next-auth";
 import { bllService } from "@/services/bll";
-import { BoardInformationResponse } from "@/services/bll/modules/board/dto/information";
+import { BoardViewResponse } from "@/services/bll/modules/board/dto";
 import { isBllModuleError } from "@/services/bll/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,14 +10,12 @@ export const getBoardHandler = async (_: NextRequest, params: Params) => {
   try {
     const session = await getNextAuthSession();
 
-    const board = await bllService.board.information(
+    const board = await bllService.board.board(
       params.params.id!,
       session?.user.id!
     );
 
-    return NextResponse.json(board as BoardInformationResponse, {
-      status: 200,
-    });
+    return NextResponse.json(board as BoardViewResponse, { status: 200 });
   } catch (error) {
     if (isBllModuleError(error)) {
       return NextResponse.json({ error: error.error }, { status: 400 });

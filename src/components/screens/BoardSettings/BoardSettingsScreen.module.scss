@@ -1,0 +1,7 @@
+.list {
+  @apply grid grid-cols-1 gap-4;
+}
+
+.item {
+  @apply flex items-center justify-between gap-4;
+}

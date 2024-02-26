@@ -11,7 +11,8 @@ import { Icon } from "@/components/base/Icon";
 import { TabItem, Tabs } from "@/components/base/Tabs";
 import { Typography } from "@/components/base/Typography/Typography";
 import { KanbanView } from "@/components/modules/board/KanbanView/KanbanView";
-import { Board } from "@/services/bll/modules/board/dto";
+import { BoardView } from "@/services/bll/modules/board/dto";
+import { BoardInformation } from "@/services/bll/modules/board/dto/information";
 import {
   AddColumnResponse,
   UpdateColumnDto,
@@ -29,7 +30,8 @@ import styles from "./BoardScreen.module.scss";
 import { useBoardScreen } from "./use-board-screen";
 
 export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
-  board: DataProp<Board>;
+  view: DataProp<BoardView>;
+  board: DataProp<BoardInformation>;
   addColumnAction: ActionProp<string, AddColumnResponse>;
   addTaskAction: ActionProp<Omit<AddTaskDto, "boardId">, AddTaskResponse>;
   updateColumnAction: ActionProp<
@@ -42,15 +44,16 @@ export type BoardScreenProps = ComponentPropsWithoutRef<"div"> & {
   >;
 };
 
-export type DraggableTask = Board["tasks"][number];
-export type DraggableColumn = Omit<Board["columns"][number], "tasks"> & {
+export type DraggableTask = BoardView["tasks"][number];
+export type DraggableColumn = Omit<BoardView["columns"][number], "tasks"> & {
   tasks: DraggableTask[];
 };
 
-type BoardView = "list" | "kanban";
+type BoardViewType = "list" | "kanban";
 
 export const BoardScreen: FC<BoardScreenProps> = (props) => {
   const {
+    view,
     board,
     addColumnAction,
     addTaskAction,
@@ -71,17 +74,17 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
     updateTaskColumnBaseOnColumn,
     updateTaskOrder,
   } = useBoardScreen({
-    columns: board.data?.columns,
-    tasks: board.data?.tasks,
+    columns: view.data?.columns,
+    tasks: view.data?.tasks,
     onUpdateColumn: updateColumnAction.action,
     onUpdateTask: updateTaskAction.action,
     onAddColumn: addColumnAction.action,
     onAddTask: addTaskAction.action,
   });
 
-  const [view, setView] = useState<BoardView>("kanban");
+  const [viewType, setViewType] = useState<BoardViewType>("kanban");
 
-  const tabs = useMemo<TabItem<BoardView>[]>(
+  const tabs = useMemo<TabItem<BoardViewType>[]>(
     () => [
       {
         id: "kanban",
@@ -119,13 +122,13 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
           title="Select view"
           variant="underlined"
           items={tabs}
-          selected={view}
+          selected={viewType}
           className={styles.tabs}
-          onSelectedChange={setView}
+          onSelectedChange={setViewType}
         />
       </header>
       <div className={styles.board}>
-        {view === "kanban" && (
+        {viewType === "kanban" && (
           <KanbanView
             columns={formattedColumns}
             className={styles.kanban}
@@ -141,7 +144,7 @@ export const BoardScreen: FC<BoardScreenProps> = (props) => {
           />
         )}
 
-        {view === "list" && <div>list</div>}
+        {viewType === "list" && <div>Come soon...</div>}
       </div>
     </section>
   );
