@@ -21,6 +21,7 @@ import clsx from "clsx";
 import styles from "./BoardSettingsScreen.module.scss";
 
 export type BoardSettingsScreenProps = ComponentPropsWithoutRef<"div"> & {
+  isReadOnly: boolean;
   board: DataProp<BoardBaseDataResponse>;
   updateBoardAction: ActionProp<BoardFormValues, any>;
   deleteBoardAction: ActionProp<{}, any>;
@@ -29,6 +30,7 @@ export type BoardSettingsScreenProps = ComponentPropsWithoutRef<"div"> & {
 
 export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
   const {
+    isReadOnly,
     updateBoardAction,
     board,
     deleteBoardAction,
@@ -73,9 +75,10 @@ export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
         title: "Archive board",
         action: "Archive",
         handler: () => setIsArchiveModalOpen(true),
+        disabled: isReadOnly,
       },
     ],
-    []
+    [isReadOnly]
   );
 
   return (
@@ -89,6 +92,7 @@ export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
         <Heading title={{ tag: "h1", text: `Base settings` }} withDivider />
         <Grid gap="4">
           <BoardForm
+            isReadOnly={isReadOnly}
             key={formKey}
             withConfirm
             type="update"
@@ -120,7 +124,13 @@ export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
                     >
                       {item.title}
                     </Typography>
-                    <Button size="sm" color="danger" onClick={item.handler}>
+                    <Button
+                      size="sm"
+                      color="danger"
+                      isDisabled={item.disabled}
+                      disabled={item.disabled}
+                      onClick={item.handler}
+                    >
                       {item.action}
                     </Button>
                   </li>

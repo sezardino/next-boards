@@ -7,6 +7,7 @@ import { useBoardBaseDataMutation } from "@/hooks/mutations/board/base-data";
 import { useDeleteBoardMutation } from "@/hooks/mutations/board/delete";
 import { useBoardBaseDataQuery } from "@/hooks/queries/boards/base-data";
 import { useBoardInformationQuery } from "@/hooks/queries/boards/information";
+import { EntityStatus } from "@prisma/client";
 import { FC, useCallback } from "react";
 
 type Props = { params: { id: string } };
@@ -54,8 +55,11 @@ export const BoardSettingsPageWrapper: FC<Props> = (props) => {
     [archiveBoard, id]
   );
 
+  if (information && "error" in information) return null;
+
   return (
     <BoardSettingsScreen
+      isReadOnly={information?.status === EntityStatus.INACTIVE || true}
       updateBoardAction={{
         action: updateBoardHandler,
         isPending: usUpdateBoardLoading,

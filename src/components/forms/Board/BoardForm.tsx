@@ -22,6 +22,7 @@ export type BoardFormValues = {
 };
 
 type Props = {
+  isReadOnly?: boolean;
   onFormSubmit: (values: BoardFormValues) => Promise<any>;
   board?: BoardBaseDataResponse;
   isLoading: boolean;
@@ -58,6 +59,7 @@ const validationSchema = z.object({
 
 export const BoardForm: FC<BoardFormProps> = (props) => {
   const {
+    isReadOnly = false,
     withConfirm = false,
     isLoading,
     type = "create",
@@ -76,6 +78,7 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
   });
 
   const submitHandler = handleSubmit(async (values) => {
+    if (isReadOnly) return;
     if (withConfirm && !isConfirmModalOpen) return setIsConfirmModalOpen(true);
 
     try {
@@ -102,6 +105,7 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
                 errorMessage={error?.message}
                 label="Title"
                 placeholder="Study"
+                isDisabled={isReadOnly}
                 disabled={isLoading}
               />
             )}
@@ -122,6 +126,7 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
                   listboxWrapper: styles.listboxWrapper,
                 }}
                 labelPlacement="outside"
+                isDisabled={isReadOnly}
                 disabled={isLoading}
               >
                 {(icon) => (
@@ -145,6 +150,7 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
               <Textarea
                 {...field}
                 label="Description"
+                isDisabled={isReadOnly}
                 placeholder="Learning"
                 description="Short description needed for describe board"
                 errorMessage={error?.message}
@@ -155,12 +161,23 @@ export const BoardForm: FC<BoardFormProps> = (props) => {
           />
         </div>
 
-        <footer className={styles.footer}>
-          {onCancelClick && <Button onClick={onCancelClick}>Cancel</Button>}
-          <Button type="submit" color="primary" disabled={isLoading}>
-            {type === "create" ? "Create new board" : "Save changes"}
-          </Button>
-        </footer>
+        {!isReadOnly && (
+          <footer className={styles.footer}>
+            {onCancelClick && (
+              <Button isDisabled={isReadOnly} onClick={onCancelClick}>
+                Cancel
+              </Button>
+            )}
+            <Button
+              isDisabled={isReadOnly}
+              type="submit"
+              color="primary"
+              disabled={isLoading}
+            >
+              {type === "create" ? "Create new board" : "Save changes"}
+            </Button>
+          </footer>
+        )}
       </form>
 
       <ModalConfirm
