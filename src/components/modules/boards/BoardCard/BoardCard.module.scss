@@ -1,0 +1,23 @@
+.element {
+  @apply h-full;
+}
+
+.header {
+  @apply flex gap-3;
+}
+
+.footer {
+  @apply flex items-center gap-3 flex-wrap justify-between;
+}
+
+.statistics {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
+.statistic {
+  @apply flex items-center gap-1;
+}
+
+.more {
+  @apply flex items-center gap-3 hover:text-primary;
+}

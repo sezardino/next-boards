@@ -1,0 +1,34 @@
+.element {
+  @apply grid grid-cols-1 gap-4;
+}
+
+.wrapper {
+}
+
+.filters {
+  @apply inline-flex gap-3 items-center flex-wrap;
+}
+
+.filter {
+  @apply max-w-56;
+}
+
+.create {
+  @apply flex-1;
+}
+
+.list {
+  @apply grid gap-3 grid-cols-[repeat(auto-fill,minmax(300px,1fr))];
+
+  &.empty {
+    @apply grid-cols-1;
+  }
+}
+
+.skeleton {
+  @apply h-40 rounded-lg;
+}
+
+.noData {
+  @apply text-center mt-4;
+}

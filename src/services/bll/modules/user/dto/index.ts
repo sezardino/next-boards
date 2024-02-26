@@ -1,2 +1,3 @@
-export * from "./base-settings";
-export * from "./password-settings";
+export * from "./general-settings";
+export * from "./me";
+export * from "./security-settings";

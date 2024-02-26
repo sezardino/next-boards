@@ -2,7 +2,9 @@ import { PrismaService } from "@/lib/prisma";
 import { hashService } from "@/services/hash";
 import { BllModule } from "../../utils";
 import { UserBllModule } from "../user";
-import { SignInError, SignUpError, SignUpRequest } from "./dto";
+import { SignInDto, SignInError, SignUpDto, SignUpError } from "./dto";
+
+export * from "./dto";
 
 export class AuthBllModule extends BllModule {
   constructor(
@@ -12,25 +14,25 @@ export class AuthBllModule extends BllModule {
     super(prismaService);
   }
 
-  async signIn(dto: SignUpRequest) {
-    const userResponse = await this.userModule.getByEmail(dto.email);
+  async signIn(dto: SignInDto) {
+    const userResponse = await this.userModule.getByLogin(dto.login);
 
     if (!userResponse) this.throw(SignInError.WrongCredentials);
 
     const { password, ...user } = userResponse;
 
-    const isPasswordMatch = hashService.compare(dto.password, password);
+    const isPasswordMatch = await hashService.compare(dto.password, password);
 
     if (!isPasswordMatch) this.throw(SignInError.WrongCredentials);
 
     return user;
   }
 
-  async signUp(dto: SignUpRequest) {
-    const userResponse = await this.userModule.getByEmail(dto.email);
+  async signUp(dto: SignUpDto) {
+    const userResponse = await this.userModule.getByLogin(dto.login);
 
-    if (userResponse) this.throw(SignUpError.EmailAlreadyExists);
+    if (userResponse) this.throw(SignUpError.LoginAlreadyExists);
 
-    return this.userModule.create(dto);
+    this.userModule.create(dto);
   }
 }

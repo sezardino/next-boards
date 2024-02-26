@@ -1,0 +1,31 @@
+.element {
+  @apply h-full grid grid-cols-1 grid-rows-[auto,1fr] gap-4;
+}
+
+.board {
+  @apply relative h-full;
+}
+
+.header {
+  @apply flex items-center gap-2;
+}
+
+.tabs {
+  @apply -order-1;
+}
+
+.tab {
+  @apply flex items-center gap-1;
+}
+
+.kanban {
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  user-select: none;
+  white-space: nowrap;
+}

@@ -1,0 +1,11 @@
+.element {
+  @apply antialiased;
+}
+
+.nav {
+  @apply flex flex-wrap justify-between items-center bg-inherit border-b-gray-700 border-b px-4 lg:px-6 py-2.5;
+}
+
+.toggler {
+  @apply md:hidden;
+}

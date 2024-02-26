@@ -1,0 +1,23 @@
+.element {
+  @apply flex flex-col gap-5 items-start w-56 h-screen transition-transform overflow-y-auto py-5 px-3 bg-inherit border-r border-gray-700 -translate-x-full md:translate-x-0 bg-background z-40;
+
+  &.open {
+    @apply translate-x-0;
+  }
+}
+
+.brand {
+  @apply py-4 inline-flex items-center gap-3 text-secondary hover:text-primary transition-colors relative;
+}
+
+.badge {
+  @apply absolute top-0 right-0 translate-x-1/2 translate-y-1/2 rotate-[15deg];
+}
+
+.nav {
+  @apply w-full;
+}
+
+.git {
+  @apply mt-auto mx-auto flex flex-col items-center gap-1 hover:text-primary transition-colors;
+}

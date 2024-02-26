@@ -1,0 +1,11 @@
+.element {
+  @apply overflow-visible;
+
+  &.dragging {
+    @apply opacity-60;
+  }
+}
+
+.header {
+  @apply grid grid-cols-[1fr,auto] gap-1;
+}
