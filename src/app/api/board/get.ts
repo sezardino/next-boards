@@ -10,7 +10,7 @@ export const getAllBoardsHandler = async (req: NextRequest) => {
     const session = await getNextAuthSession();
     const params = formatUrlSearchParams(req.nextUrl.searchParams);
 
-    const boards = await bllService.board.getAll(params, session?.user.id!);
+    const boards = await bllService.board.all(params, session?.user.id!);
 
     return NextResponse.json({ boards } as AllBoardsResponse, { status: 200 });
   } catch (error) {

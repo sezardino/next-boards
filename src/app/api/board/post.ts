@@ -10,10 +10,7 @@ export const postCreateBoardHandler = async (req: NextRequest) => {
 
     const body = (await req.json()) as CreateBoardDto;
 
-    const response = await bllService.board.createBoard(
-      body,
-      session?.user.id!
-    );
+    const response = await bllService.board.create(body, session?.user.id!);
 
     return NextResponse.json(response, { status: 201 });
   } catch (error) {

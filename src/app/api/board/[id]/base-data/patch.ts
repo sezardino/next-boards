@@ -9,7 +9,7 @@ export const patchBaseDataHandler = async (req: NextRequest) => {
     const dto = await req.json();
 
     const session = await getNextAuthSession();
-    const response = await bllService.board.updateBaseBoardData(
+    const response = await bllService.board.updateBaseData(
       dto,
       session?.user.id!
     );

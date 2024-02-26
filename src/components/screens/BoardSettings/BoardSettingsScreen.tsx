@@ -32,14 +32,17 @@ export const BoardSettingsScreen: FC<BoardSettingsScreenProps> = (props) => {
       className={clsx(styles.element, className)}
     >
       <Heading title={{ tag: "h1", text: `Base settings` }} withDivider />
-      <BoardForm
-        key={formKey}
-        withConfirm
-        type="update"
-        board={board.data}
-        isLoading={board.isLoading || updateBoardAction.isPending}
-        onFormSubmit={updateBoardAction.action}
-      />
+      <Grid gap="8">
+        <BoardForm
+          key={formKey}
+          withConfirm
+          type="update"
+          board={board.data}
+          isLoading={board.isLoading || updateBoardAction.isPending}
+          onFormSubmit={updateBoardAction.action}
+        />
+        <div>123</div>
+      </Grid>
     </Grid>
   );
 };

@@ -4,13 +4,12 @@ import { BoardFormValues } from "@/components/forms/Board/BoardForm";
 import { BoardSettingsScreen } from "@/components/screens/BoardSettings/BoardSettingsScreen";
 import { useBoardBaseDataMutation } from "@/hooks/mutations/board/base-data";
 import { useBoardBaseDataQuery } from "@/hooks/queries/boards/base-data";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 
-export const BoardSettingsPageWrapper = ({
-  params: { id },
-}: {
-  params: { id: string };
-}) => {
+type Props = { params: { id: string } };
+
+export const BoardSettingsPageWrapper: FC<Props> = (props) => {
+  const { id } = props.params;
   const { data: board, isFetching: isBoardLoading } = useBoardBaseDataQuery(id);
 
   const { mutateAsync: updateBoard, isPending: usUpdateBoardLoading } =

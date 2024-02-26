@@ -9,7 +9,7 @@ export const getBaseDataHandler = async (
 ) => {
   try {
     const session = await getNextAuthSession();
-    const response = await bllService.board.baseBoardData(
+    const response = await bllService.board.baseData(
       params.params.id,
       session?.user.id!
     );
