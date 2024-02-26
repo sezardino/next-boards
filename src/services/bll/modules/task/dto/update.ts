@@ -10,6 +10,7 @@ export const updateTaskDtoSchema = z.object({
 
 export enum UpdateTaskError {
   WrongData = "WrongData",
+  BoardArchived = "BoardArchived",
 }
 
 export type UpdateTaskDto = z.infer<typeof updateTaskDtoSchema>;

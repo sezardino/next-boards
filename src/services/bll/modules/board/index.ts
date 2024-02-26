@@ -14,7 +14,7 @@ import { DeleteBoardError } from "./dto/delete";
 import { PatchBoardBaseDataDto } from "./dto/update-base-data";
 
 export class BoardBllModule extends BllModule {
-  getAll(dto: AllBoardsDto = {}, userId: string) {
+  all(dto: AllBoardsDto = {}, userId: string) {
     const { search, status } = dto;
 
     return this.prismaService.board.findMany({
@@ -64,7 +64,7 @@ export class BoardBllModule extends BllModule {
     return neededBoard;
   }
 
-  async createBoard(dto: CreateBoardDto, userId: string) {
+  async create(dto: CreateBoardDto, userId: string) {
     const boardsCount = await this.prismaService.board.count({
       where: { userId, status: EntityStatus.ACTIVE },
     });
@@ -82,7 +82,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async archiveBoard(dto: ArchiveBoardDto, userId: string) {
+  async archive(dto: ArchiveBoardDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId, status: EntityStatus.ACTIVE },
       select: { id: true },
@@ -96,7 +96,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async deleteBoard(id: string, userId: string) {
+  async delete(id: string, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id, userId, status: EntityStatus.ACTIVE },
       select: { id: true },
@@ -110,7 +110,7 @@ export class BoardBllModule extends BllModule {
     });
   }
 
-  async baseBoardData(id: string, userId: string) {
+  async baseData(id: string, userId: string) {
     const board = await this.prismaService.board.findUnique({
       where: { id, userId },
       select: {
@@ -126,7 +126,7 @@ export class BoardBllModule extends BllModule {
     return board;
   }
 
-  async updateBaseBoardData(dto: PatchBoardBaseDataDto, userId: string) {
+  async updateBaseData(dto: PatchBoardBaseDataDto, userId: string) {
     const board = await this.prismaService.board.findUnique({
       where: { id: dto.id, userId },
       select: {

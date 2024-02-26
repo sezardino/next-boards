@@ -11,6 +11,7 @@ export type UpdateColumnDto = z.infer<typeof updateColumnDtoSchema>;
 
 export enum UpdateColumnError {
   NotFound = "Not found",
+  BoardArchived = "Board archived",
 }
 
 export const updateColumnResponseSchema = z.object({});

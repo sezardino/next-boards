@@ -68,7 +68,7 @@ model Column {
   title String
   order Int    @default(0)
 
-  board   Board  @relation(fields: [boardId], references: [id])
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId String @db.ObjectId
   tasks   Task[]
   user    User   @relation(fields: [userId], references: [id])
@@ -89,7 +89,7 @@ model Task {
   completed   Boolean  @default(false)
   order       Int      @default(0)
 
-  board    Board  @relation(fields: [boardId], references: [id])
+  board    Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId  String @db.ObjectId
   column   Column @relation(fields: [columnId], references: [id])
   columnId String @db.ObjectId

@@ -9,6 +9,7 @@ export type AddColumnDto = z.infer<typeof addColumnDtoSchema>;
 
 export enum AddColumnError {
   BoardNotFound = "BoardNotFound",
+  BoardArchived = "Board Archived",
 }
 
 export const addColumnResponseSchema = z

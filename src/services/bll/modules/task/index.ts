@@ -1,3 +1,4 @@
+import { EntityStatus } from "@prisma/client";
 import { BllModule } from "../../utils";
 import {
   AddTaskDto,
@@ -14,10 +15,12 @@ export class TaskBllModule extends BllModule {
         userId: userId,
         columns: { some: { id: dto.columnId } },
       },
-      select: { _count: { select: { tasks: true } } },
+      select: { status: true, _count: { select: { tasks: true } } },
     });
 
     if (!neededBoard) this.throw(AddTaskError.WrongData);
+    if (neededBoard.status === EntityStatus.INACTIVE)
+      this.throw(AddTaskError.BoardArchived);
 
     return await this.prismaService.task.create({
       data: {
@@ -36,10 +39,12 @@ export class TaskBllModule extends BllModule {
 
     const neededTask = await this.prismaService.task.findUnique({
       where: { id: taskId, boardId, userId },
-      select: { id: true, columnId: true },
+      select: { id: true, columnId: true, board: { select: { status: true } } },
     });
 
     if (!neededTask) this.throw(UpdateTaskError.WrongData);
+    if (neededTask.board.status === EntityStatus.INACTIVE)
+      this.throw(UpdateTaskError.BoardArchived);
 
     if (order && !newColumnId) {
       await this.updateTasksOrderInColumn({

@@ -13,6 +13,7 @@ export type AddTaskDto = z.infer<typeof addTaskDtoSchema>;
 
 export enum AddTaskError {
   WrongData = "WrongData",
+  BoardArchived = "BoardArchived",
 }
 
 export const addTaskResponseSchema = z.object({}).or(

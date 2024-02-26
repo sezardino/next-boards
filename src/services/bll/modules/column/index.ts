@@ -1,3 +1,4 @@
+import { EntityStatus } from "@prisma/client";
 import { BllModule } from "../../utils";
 import {
   AddColumnDto,
@@ -10,10 +11,12 @@ export class ColumnBllModule extends BllModule {
   async add(dto: AddColumnDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.boardId, userId },
-      select: { _count: { select: { columns: true } } },
+      select: { status: true, _count: { select: { columns: true } } },
     });
 
     if (!neededBoard) this.throw(AddColumnError.BoardNotFound);
+    if (neededBoard.status === EntityStatus.INACTIVE)
+      this.throw(AddColumnError.BoardArchived);
 
     return await this.prismaService.column.create({
       data: {
@@ -29,10 +32,12 @@ export class ColumnBllModule extends BllModule {
   async update(dto: UpdateColumnDto, userId: string) {
     const neededBoard = await this.prismaService.board.findUnique({
       where: { id: dto.boardId, userId },
-      select: { id: true },
+      select: { id: true, status: true },
     });
 
     if (!neededBoard) this.throw(UpdateColumnError.NotFound);
+    if (neededBoard.status === EntityStatus.INACTIVE)
+      this.throw(UpdateColumnError.BoardArchived);
 
     const neededColumn = await this.prismaService.column.findUnique({
       where: { id: dto.columnId, boardId: dto.boardId },
